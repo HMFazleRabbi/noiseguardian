@@ -4,11 +4,9 @@ import 'package:noise_guardian/data/repositories/consent_repository.dart';
 import 'package:noise_guardian/data/repositories/report_repository.dart';
 import 'package:noise_guardian/data/services/calibration_service.dart';
 import 'package:noise_guardian/data/services/debug_log_service.dart';
-import 'package:noise_guardian/data/services/encryption_service.dart';
 import 'package:noise_guardian/data/services/geolocator_gps_service.dart';
 import 'package:noise_guardian/data/services/gps_service.dart';
 import 'package:noise_guardian/data/services/pdf_export_service.dart';
-import 'package:noise_guardian/data/services/signing_service.dart';
 import 'package:noise_guardian/data/services/timestamp_service.dart';
 import 'package:noise_guardian/data/services/violation_evaluator.dart';
 import 'package:noise_guardian/data/services/zone_threshold_service.dart';
@@ -37,8 +35,6 @@ void main() {
       expect(getIt<ViolationEvaluator>(), isA<ViolationEvaluator>());
       expect(getIt<TimestampService>(), isA<LocalTimestampService>());
       expect(getIt<GpsService>(), isA<GeolocatorGpsService>());
-      expect(getIt<SigningService>(), isA<EcdsaSigningService>());
-      expect(getIt<EncryptionService>(), isA<AesEncryptionService>());
       expect(getIt<BuildEvidencePacketUseCase>(), isA<BuildEvidencePacketUseCase>());
     });
 

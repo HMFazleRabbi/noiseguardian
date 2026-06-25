@@ -4,7 +4,7 @@ import 'package:noise_guardian/domain/models/evidence_packet.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-/// Exports an evidence packet as a shareable PDF receipt.
+/// Exports an evidence packet as a shareable PDF report.
 class PdfExportService {
   const PdfExportService();
 
@@ -30,15 +30,14 @@ class PdfExportService {
             pw.Text('Violation: ${packet.metrics.isViolation}'),
             pw.SizedBox(height: 12),
             pw.Text(
-              'Location (obfuscated): '
-              '${packet.metadata.latObfuscated.toStringAsFixed(4)}, '
-              '${packet.metadata.lonObfuscated.toStringAsFixed(4)}',
+              'Location: '
+              '${packet.metadata.lat.toStringAsFixed(4)}, '
+              '${packet.metadata.lon.toStringAsFixed(4)}',
             ),
             pw.Text('Zone: ${packet.metadata.zoneType}'),
             pw.Text('Timestamp: ${packet.metadata.timestampIso}'),
             pw.SizedBox(height: 12),
             pw.Text('Hash SHA-256: ${packet.security.hashSha256}'),
-            pw.Text('Signature ECDSA: ${packet.security.signatureEcdsa}'),
           ],
         ),
       ),

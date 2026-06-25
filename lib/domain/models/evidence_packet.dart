@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:noise_guardian/core/crypto/canonical_json.dart';
 
-/// Acoustic metrics block (design doc §11).
+/// Acoustic metrics block.
 class EvidenceMetrics {
   const EvidenceMetrics({
     required this.laeqDb,
@@ -38,18 +38,14 @@ class EvidenceMetrics {
   }
 }
 
-/// Location, timestamp, and device metadata (design doc §11).
+/// Location, timestamp, and device metadata.
 class EvidenceMetadata {
   const EvidenceMetadata({
     required this.lat,
     required this.lon,
-    required this.latObfuscated,
-    required this.lonObfuscated,
     required this.gpsAccuracyM,
-    required this.gpsDop,
     required this.gpsHash,
     required this.timestampIso,
-    required this.timestampToken,
     required this.deviceIdHash,
     required this.appVersion,
     required this.zoneType,
@@ -57,13 +53,9 @@ class EvidenceMetadata {
 
   final double lat;
   final double lon;
-  final double latObfuscated;
-  final double lonObfuscated;
   final double gpsAccuracyM;
-  final double gpsDop;
   final String gpsHash;
   final String timestampIso;
-  final String timestampToken;
   final String deviceIdHash;
   final String appVersion;
   final String zoneType;
@@ -71,13 +63,9 @@ class EvidenceMetadata {
   Map<String, dynamic> toJson() => {
         'lat': lat,
         'lon': lon,
-        'lat_obfuscated': latObfuscated,
-        'lon_obfuscated': lonObfuscated,
         'gps_accuracy_m': gpsAccuracyM,
-        'gps_dop': gpsDop,
         'gps_hash': gpsHash,
         'timestamp_iso': timestampIso,
-        'timestamp_token': timestampToken,
         'device_id_hash': deviceIdHash,
         'app_version': appVersion,
         'zone_type': zoneType,
@@ -87,13 +75,9 @@ class EvidenceMetadata {
     return EvidenceMetadata(
       lat: (json['lat'] as num).toDouble(),
       lon: (json['lon'] as num).toDouble(),
-      latObfuscated: (json['lat_obfuscated'] as num).toDouble(),
-      lonObfuscated: (json['lon_obfuscated'] as num).toDouble(),
       gpsAccuracyM: (json['gps_accuracy_m'] as num).toDouble(),
-      gpsDop: (json['gps_dop'] as num).toDouble(),
       gpsHash: json['gps_hash'] as String,
       timestampIso: json['timestamp_iso'] as String,
-      timestampToken: json['timestamp_token'] as String,
       deviceIdHash: json['device_id_hash'] as String,
       appVersion: json['app_version'] as String,
       zoneType: json['zone_type'] as String,
@@ -101,35 +85,24 @@ class EvidenceMetadata {
   }
 }
 
-/// Cryptographic integrity block (design doc §11).
+/// SHA-256 integrity block (MVP — hash only).
 class EvidenceSecurity {
-  const EvidenceSecurity({
-    required this.hashSha256,
-    required this.signatureEcdsa,
-    this.serverSignatureEcdsa,
-  });
+  const EvidenceSecurity({required this.hashSha256});
 
   final String hashSha256;
-  final String signatureEcdsa;
-  final String? serverSignatureEcdsa;
 
   Map<String, dynamic> toJson() => {
         'hash_sha256': hashSha256,
-        'signature_ecdsa': signatureEcdsa,
-        if (serverSignatureEcdsa != null)
-          'server_signature_ecdsa': serverSignatureEcdsa,
       };
 
   factory EvidenceSecurity.fromJson(Map<String, dynamic> json) {
     return EvidenceSecurity(
       hashSha256: json['hash_sha256'] as String,
-      signatureEcdsa: json['signature_ecdsa'] as String,
-      serverSignatureEcdsa: json['server_signature_ecdsa'] as String?,
     );
   }
 }
 
-/// Immutable evidence packet for sync queue (design doc §11).
+/// Immutable local evidence packet.
 class EvidencePacket {
   const EvidencePacket({
     required this.metrics,

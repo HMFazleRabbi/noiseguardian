@@ -52,6 +52,8 @@ abstract final class AppStrings {
   static const reportsTitle = 'Evidence Reports';
   static const reportsEmpty = 'No reports saved yet.';
   static const reportsExportPdf = 'Export PDF';
+  static const reportsShareJson = 'Share JSON';
+  static const reportsSharePdf = 'Share PDF';
 
   static String reportsLaeqSubtitle(String value) => 'LAeq $value dB(A)';
 

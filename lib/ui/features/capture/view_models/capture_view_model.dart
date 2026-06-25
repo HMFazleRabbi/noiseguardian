@@ -148,8 +148,8 @@ class CaptureViewModel extends ChangeNotifier {
           'Packet built',
           data: {
             'hash_sha256': _lastEvidencePacket!.security.hashSha256,
-            'gps_obfuscated_lat': _lastEvidencePacket!.metadata.latObfuscated,
-            'gps_obfuscated_lon': _lastEvidencePacket!.metadata.lonObfuscated,
+            'lat': _lastEvidencePacket!.metadata.lat,
+            'lon': _lastEvidencePacket!.metadata.lon,
           },
         );
         if (_reportRepository != null) {

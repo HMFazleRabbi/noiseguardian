@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:noise_guardian/core/crypto/gps_math.dart';
 import 'package:noise_guardian/data/services/gps_service.dart';
-import 'package:noise_guardian/data/services/signing_service.dart';
 import 'package:noise_guardian/data/services/timestamp_service.dart';
 import 'package:noise_guardian/data/services/violation_evaluator.dart';
 import 'package:noise_guardian/domain/models/evidence_packet.dart';
@@ -11,28 +10,25 @@ import 'package:noise_guardian/domain/models/violation_result.dart';
 import 'package:noise_guardian/domain/models/zone_type.dart';
 
 /// Application version stamped on evidence packets.
-const String kEvidenceAppVersion = '0.4.0-stage4';
+const String kEvidenceAppVersion = '2.0.0-mvp';
 
-/// Assembles signed [EvidencePacket] from capture metrics and services.
+/// Assembles [EvidencePacket] with SHA-256 integrity hash.
 class BuildEvidencePacketUseCase {
   BuildEvidencePacketUseCase({
     required ViolationEvaluator violationEvaluator,
     required TimestampService timestampService,
     required GpsService gpsService,
-    required SigningService signingService,
     required String deviceInstallId,
     DateTime Function()? clock,
   })  : _violationEvaluator = violationEvaluator,
         _timestampService = timestampService,
         _gpsService = gpsService,
-        _signingService = signingService,
         _deviceInstallId = deviceInstallId,
         _clock = clock ?? DateTime.now;
 
   final ViolationEvaluator _violationEvaluator;
   final TimestampService _timestampService;
   final GpsService _gpsService;
-  final SigningService _signingService;
   final String _deviceInstallId;
   final DateTime Function() _clock;
 
@@ -51,10 +47,6 @@ class BuildEvidencePacketUseCase {
     );
     final fix = await _gpsService.getCurrentPosition();
 
-    final latObf = obfuscateCoordinate(fix.latitude);
-    final lonObf = obfuscateCoordinate(fix.longitude);
-    final hash = gpsHash(fix.latitude, fix.longitude);
-
     final metrics = EvidenceMetrics(
       laeqDb: laeqDb,
       lcPeakDb: lcPeakDb,
@@ -66,13 +58,9 @@ class BuildEvidencePacketUseCase {
     final metadata = EvidenceMetadata(
       lat: fix.latitude,
       lon: fix.longitude,
-      latObfuscated: latObf,
-      lonObfuscated: lonObf,
       gpsAccuracyM: fix.accuracyM,
-      gpsDop: fix.dop,
-      gpsHash: hash,
-      timestampIso: timestamp.toUtc().toIso8601String(),
-      timestampToken: _timestampService.nowToken(),
+      gpsHash: gpsHash(fix.latitude, fix.longitude),
+      timestampIso: _timestampService.nowIso(timestamp),
       deviceIdHash: _deviceIdHash(_deviceInstallId),
       appVersion: kEvidenceAppVersion,
       zoneType: zoneType.wireName,
@@ -81,23 +69,15 @@ class BuildEvidencePacketUseCase {
     final unsigned = EvidencePacket(
       metrics: metrics,
       metadata: metadata,
-      security: const EvidenceSecurity(
-        hashSha256: '',
-        signatureEcdsa: '',
-      ),
+      security: const EvidenceSecurity(hashSha256: ''),
     );
 
     final hashSha256 = unsigned.computeHashSha256();
-    final canonical = unsigned.canonicalPayload();
-    final signature = await _signingService.sign(canonical);
 
     return EvidencePacket(
       metrics: metrics,
       metadata: metadata,
-      security: EvidenceSecurity(
-        hashSha256: hashSha256,
-        signatureEcdsa: signature,
-      ),
+      security: EvidenceSecurity(hashSha256: hashSha256),
     );
   }
 

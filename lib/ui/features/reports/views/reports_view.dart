@@ -68,13 +68,26 @@ class _ReportsViewState extends State<ReportsView> with LoggedScreenState {
                 item.packet.metadata.timestampIso,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  key: ValueKey('reports_export_pdf_${item.id}'),
-                  onPressed: () => unawaited(_exportPdf(context, vm, item)),
-                  child: const Text(AppStrings.reportsExportPdf),
-                ),
+              Wrap(
+                spacing: 4,
+                runSpacing: 0,
+                children: [
+                  TextButton(
+                    key: ValueKey('reports_export_json_${item.id}'),
+                    onPressed: () => unawaited(_shareJson(context, vm, item)),
+                    child: const Text(AppStrings.reportsShareJson),
+                  ),
+                  TextButton(
+                    key: ValueKey('reports_export_pdf_${item.id}'),
+                    onPressed: () => unawaited(_printPdf(context, vm, item)),
+                    child: const Text(AppStrings.reportsExportPdf),
+                  ),
+                  TextButton(
+                    key: ValueKey('reports_share_pdf_${item.id}'),
+                    onPressed: () => unawaited(_sharePdf(context, vm, item)),
+                    child: const Text(AppStrings.reportsSharePdf),
+                  ),
+                ],
               ),
             ],
           ),
@@ -84,15 +97,31 @@ class _ReportsViewState extends State<ReportsView> with LoggedScreenState {
     );
   }
 
-  Future<void> _exportPdf(
+  Future<void> _shareJson(
     BuildContext context,
     ReportsViewModel vm,
     SavedReport item,
   ) async {
-    final bytes = await vm.exportPdf(item);
-    if (!context.mounted || bytes == null) {
+    await vm.shareJson(item);
+  }
+
+  Future<void> _printPdf(
+    BuildContext context,
+    ReportsViewModel vm,
+    SavedReport item,
+  ) async {
+    final bytes = await vm.exportPdfBytes(item);
+    if (!context.mounted) {
       return;
     }
     await Printing.layoutPdf(onLayout: (_) async => bytes);
+  }
+
+  Future<void> _sharePdf(
+    BuildContext context,
+    ReportsViewModel vm,
+    SavedReport item,
+  ) async {
+    await vm.sharePdf(item);
   }
 }

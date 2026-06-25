@@ -4,8 +4,6 @@ EvidencePacket sampleEvidencePacket({
   double laeqDb = 58.0,
   double lat = 23.810331,
   double lon = 90.412521,
-  double latObf = 23.81,
-  double lonObf = 90.41,
   bool isViolation = true,
 }) {
   return EvidencePacket(
@@ -19,20 +17,15 @@ EvidencePacket sampleEvidencePacket({
     metadata: EvidenceMetadata(
       lat: lat,
       lon: lon,
-      latObfuscated: latObf,
-      lonObfuscated: lonObf,
       gpsAccuracyM: 10,
-      gpsDop: 1.2,
       gpsHash: 'hash123',
       timestampIso: '2026-06-25T10:00:00.000Z',
-      timestampToken: 'token-1',
       deviceIdHash: 'device-hash',
-      appVersion: '0.5.0-stage5',
+      appVersion: '2.0.0-mvp',
       zoneType: 'residential',
     ),
     security: const EvidenceSecurity(
       hashSha256: 'abc',
-      signatureEcdsa: 'sig',
     ),
   );
 }

@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acoustic evidence of noise pollution in Dhaka. **Original Stages 1–6 are complete.** The project is now executing the **MVP descope** roadmap ([NG-Update-Design-Doc.md](../NG-Update-Design-Doc.md) §7). **MVP Stages 1–4 are complete** on branch `mvp-descope`.
+NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acoustic evidence of noise pollution in Dhaka. **Original Stages 1–6 are complete.** The project is now executing the **MVP descope** roadmap ([NG-Update-Design-Doc.md](../NG-Update-Design-Doc.md) §7). **MVP Stages 1–5 are complete** on branch `mvp-descope`.
 
 ---
 
@@ -21,8 +21,24 @@ NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acousti
 | 2 | Remove Voice/TTS + Low-data; simplify Sensor Guard | **Complete** |
 | 3 | Remove l10n → English strings | **Complete** |
 | 4 | Remove Sync/Queue → ReportRepository | **Complete** |
-| 5 | Slim crypto + SHA-256 packet + local export | Not started |
+| 5 | Slim crypto + SHA-256 packet + local export | **Complete** |
 | 6 | YAMNet edge AI + release hardening | Not started |
+
+### MVP Stage 5 — Slim Crypto + SHA-256 Packet + Local Export
+
+| Deliverable | Status |
+|-------------|--------|
+| Add `share_plus` + JSON export/share on Reports tab | Done |
+| Simplify timestamp to ISO-8601 (drop token) | Done |
+| Drop GPS obfuscation fields from packet | Done |
+| Slim security block to `hash_sha256` only | Done |
+| Remove ECDSA/AES/keystore + deps; version `2.0.0-mvp` | Done |
+
+**Quality gates (MVP Stage 5):** `flutter analyze` 0 errors · **88 / 88 tests** · debug APK (arm64) builds
+
+See [log/mvp-stage-5-dev-log.md](mvp-stage-5-dev-log.md).
+
+---
 
 ### MVP Stage 4 — Remove Sync/Queue → ReportRepository
 
@@ -161,17 +177,17 @@ test/widget/settings_view_test.dart            — 1 test
 
 ---
 
-## Next Up — MVP Stage 5 (Slim crypto + SHA-256 packet + local export)
+## Next Up — MVP Stage 6 (YAMNet edge AI + release hardening)
 
 **Deliverables:**
 
-- Slim `EvidencePacket` to SHA-256 only
-- Remove ECDSA/AES/keystore
-- Add JSON export/share via `share_plus`
+- Bundle YAMNet TFLite model + class map
+- Replace heuristic classifier with real on-device inference
+- Move capture to 16 kHz mono; release build hardening
 
 ---
 
-## Next Up — MVP Stage 4 — superseded
+## Next Up — MVP Stage 5 — superseded
 
 **Deliverables:**
 

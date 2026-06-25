@@ -9,7 +9,7 @@ import '../fakes/fake_report_repository.dart';
 import '../fixtures/sample_evidence_packet.dart';
 
 void main() {
-  testWidgets('ReportsView lists saved reports and export button', (tester) async {
+  testWidgets('ReportsView lists saved reports with export actions', (tester) async {
     final reports = FakeReportRepository();
     await reports.save(sampleEvidencePacket());
 
@@ -28,6 +28,7 @@ void main() {
 
     expect(find.byKey(const ValueKey('reports_view')), findsOneWidget);
     expect(find.text('construction'), findsOneWidget);
-    expect(find.text(AppStrings.reportsExportPdf), findsOneWidget);
+    expect(find.text(AppStrings.reportsShareJson), findsOneWidget);
+    expect(find.text(AppStrings.reportsSharePdf), findsOneWidget);
   });
 }

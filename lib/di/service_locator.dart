@@ -7,15 +7,12 @@ import 'package:noise_guardian/data/services/audio_capture_service.dart';
 import 'package:noise_guardian/data/services/audio_purge_service.dart';
 import 'package:noise_guardian/data/services/calibration_service.dart';
 import 'package:noise_guardian/data/services/debug_log_service.dart';
-import 'package:noise_guardian/data/services/encryption_service.dart';
 import 'package:noise_guardian/data/services/feature_extractor.dart';
 import 'package:noise_guardian/data/services/geolocator_gps_service.dart';
 import 'package:noise_guardian/data/services/gps_service.dart';
-import 'package:noise_guardian/data/services/key_store.dart';
 import 'package:noise_guardian/data/services/laeq_service.dart';
 import 'package:noise_guardian/data/services/pdf_export_service.dart';
 import 'package:noise_guardian/data/services/sensor_guard_service.dart';
-import 'package:noise_guardian/data/services/signing_service.dart';
 import 'package:noise_guardian/data/services/tflite_classifier.dart';
 import 'package:noise_guardian/data/services/timestamp_service.dart';
 import 'package:noise_guardian/data/services/violation_evaluator.dart';
@@ -49,9 +46,6 @@ void configureDependencies({
   ViolationEvaluator? violationEvaluator,
   TimestampService? timestampService,
   GpsService? gpsService,
-  SigningService? signingService,
-  EncryptionService? encryptionService,
-  KeyStore? keyStore,
   BuildEvidencePacketUseCase? buildEvidencePacketUseCase,
   String? deviceInstallId,
   bool hasConsented = true,
@@ -122,17 +116,8 @@ void configureDependencies({
           timestampService: getIt<TimestampService>(),
         ),
   );
-  getIt.registerLazySingleton<KeyStore>(
-    () => keyStore ?? FlutterSecureKeyStore(),
-  );
   getIt.registerLazySingleton<GpsService>(
     () => gpsService ?? const GeolocatorGpsService(),
-  );
-  getIt.registerLazySingleton<SigningService>(
-    () => signingService ?? EcdsaSigningService(keyStore: getIt<KeyStore>()),
-  );
-  getIt.registerLazySingleton<EncryptionService>(
-    () => encryptionService ?? AesEncryptionService(keyStore: getIt<KeyStore>()),
   );
   getIt.registerLazySingleton<BuildEvidencePacketUseCase>(
     () =>
@@ -141,7 +126,6 @@ void configureDependencies({
           violationEvaluator: getIt<ViolationEvaluator>(),
           timestampService: getIt<TimestampService>(),
           gpsService: getIt<GpsService>(),
-          signingService: getIt<SigningService>(),
           deviceInstallId: deviceInstallId ?? 'uninitialized-install-id',
         ),
   );
@@ -192,9 +176,6 @@ Future<void> configureDependenciesAsync({
   ViolationEvaluator? violationEvaluator,
   TimestampService? timestampService,
   GpsService? gpsService,
-  SigningService? signingService,
-  EncryptionService? encryptionService,
-  KeyStore? keyStore,
   BuildEvidencePacketUseCase? buildEvidencePacketUseCase,
   ReportRepository? reportRepository,
 }) async {
@@ -229,9 +210,6 @@ Future<void> configureDependenciesAsync({
     violationEvaluator: violationEvaluator,
     timestampService: timestampService,
     gpsService: gpsService,
-    signingService: signingService,
-    encryptionService: encryptionService,
-    keyStore: keyStore,
     buildEvidencePacketUseCase: buildEvidencePacketUseCase,
     deviceInstallId: deviceInstallId,
   );
@@ -261,10 +239,7 @@ void _unregisterStageServices() {
   _unregisterIfNeeded<ZoneThresholdService>();
   _unregisterIfNeeded<ViolationEvaluator>();
   _unregisterIfNeeded<TimestampService>();
-  _unregisterIfNeeded<KeyStore>();
   _unregisterIfNeeded<GpsService>();
-  _unregisterIfNeeded<SigningService>();
-  _unregisterIfNeeded<EncryptionService>();
   _unregisterIfNeeded<BuildEvidencePacketUseCase>();
   _unregisterIfNeeded<CaptureViewModel>();
   _unregisterIfNeeded<ReportsViewModel>();
