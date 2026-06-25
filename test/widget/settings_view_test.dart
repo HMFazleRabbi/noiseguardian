@@ -58,16 +58,13 @@ void main() {
 
     expect(find.byKey(const ValueKey('settings_view')), findsOneWidget);
     expect(find.byKey(const ValueKey('settings_mock_doe_indicator')), findsOneWidget);
-
-    await tester.tap(find.byKey(const ValueKey('settings_low_data_toggle')));
-    await tester.pumpAndSettle();
-    expect(settings.lowDataMode, isTrue);
+    expect(find.byKey(const ValueKey('settings_low_data_toggle')), findsNothing);
 
     expect(find.byKey(const ValueKey('settings_language_selector')), findsOneWidget);
     await vm.setLocaleCode('bn');
     await tester.pumpAndSettle();
 
     expect(settings.localeCode, 'bn');
-    expect(find.text('কম-ডেটা মোড (শুধু WiFi সিঙ্ক)'), findsOneWidget);
+    expect(find.text('সেটিংস'), findsOneWidget);
   });
 }

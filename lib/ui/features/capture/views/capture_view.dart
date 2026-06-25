@@ -17,10 +17,7 @@ class _CaptureViewState extends State<CaptureView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final vm = context.read<CaptureViewModel>();
-      final l10n = AppLocalizations.of(context)!;
-      vm.bindVoicePrompts(l10n);
-      vm.initialize();
+      context.read<CaptureViewModel>().initialize();
     });
   }
 
@@ -176,15 +173,7 @@ class _GuardBanner extends StatelessWidget {
           Theme.of(context).colorScheme.primaryContainer,
           l10n.guardOk,
         ),
-      GuardState.muffled => (
-          Theme.of(context).colorScheme.errorContainer,
-          l10n.guardMuffled,
-        ),
-      GuardState.pocketed => (
-          Theme.of(context).colorScheme.errorContainer,
-          l10n.guardPocketed,
-        ),
-      GuardState.obscured => (
+      GuardState.unsteady => (
           Theme.of(context).colorScheme.errorContainer,
           l10n.guardObscured,
         ),

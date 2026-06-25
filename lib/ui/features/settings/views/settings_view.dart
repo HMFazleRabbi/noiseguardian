@@ -137,14 +137,6 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
                       )
                     else ...[
                       const SizedBox(height: 12),
-                      SwitchListTile(
-                        key: const ValueKey('settings_low_data_toggle'),
-                        title: Text(l10n.settingsLowDataMode),
-                        subtitle: Text(l10n.settingsLowDataHint),
-                        value: vm.lowDataMode,
-                        onChanged: (value) => vm.setLowDataMode(value),
-                      ),
-                      const SizedBox(height: 8),
                       Text(l10n.settingsLanguage, style: Theme.of(context).textTheme.titleSmall),
                       SegmentedButton<String>(
                         key: const ValueKey('settings_language_selector'),

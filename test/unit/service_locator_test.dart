@@ -16,7 +16,6 @@ import 'package:noise_guardian/data/services/signing_service.dart';
 import 'package:noise_guardian/data/services/sync_service.dart';
 import 'package:noise_guardian/data/services/timestamp_service.dart';
 import 'package:noise_guardian/data/services/violation_evaluator.dart';
-import 'package:noise_guardian/data/services/voice_prompt_service.dart';
 import 'package:noise_guardian/data/services/zone_threshold_service.dart';
 import 'package:noise_guardian/di/service_locator.dart';
 import 'package:noise_guardian/domain/use_cases/build_evidence_packet_use_case.dart';
@@ -42,7 +41,6 @@ void main() {
       expect(getIt<SyncService>(), isA<LocalMockDoeSyncService>());
       expect(getIt<DebugLogService>(), isA<NoopDebugLogService>());
       expect(getIt<ConnectivityService>(), isA<AlwaysWifiConnectivityService>());
-      expect(getIt<VoicePromptService>(), isA<NoopVoicePromptService>());
       expect(getIt<PdfExportService>(), isA<PdfExportService>());
       expect(getIt<AppLocaleNotifier>(), isA<AppLocaleNotifier>());
       expect(getIt<ZoneThresholdService>(), isA<ZoneThresholdService>());

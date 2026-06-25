@@ -12,14 +12,12 @@ import 'package:noise_guardian/data/services/laeq_service.dart';
 import 'package:noise_guardian/data/services/sensor_guard_service.dart';
 import 'package:noise_guardian/data/services/tflite_classifier.dart';
 import 'package:noise_guardian/data/services/timestamp_service.dart';
-import 'package:noise_guardian/data/services/voice_prompt_service.dart';
 import 'package:noise_guardian/data/services/zone_threshold_service.dart';
 import 'package:noise_guardian/domain/models/classification_result.dart';
 import 'package:noise_guardian/domain/models/evidence_packet.dart';
 import 'package:noise_guardian/domain/models/guard_state.dart';
 import 'package:noise_guardian/domain/models/zone_type.dart';
 import 'package:noise_guardian/domain/use_cases/build_evidence_packet_use_case.dart';
-import 'package:noise_guardian/l10n/app_localizations.dart';
 
 class CaptureViewModel extends ChangeNotifier {
   CaptureViewModel({
@@ -33,7 +31,6 @@ class CaptureViewModel extends ChangeNotifier {
     BuildEvidencePacketUseCase? buildEvidencePacket,
     EvidenceQueueRepository? evidenceQueue,
     DebugLogService? debugLog,
-    VoicePromptService? voicePrompt,
     ZoneThresholdService? zoneThreshold,
     TimestampService? timestampService,
     ZoneType zoneType = ZoneType.residential,
@@ -47,7 +44,6 @@ class CaptureViewModel extends ChangeNotifier {
         _buildEvidencePacket = buildEvidencePacket,
         _evidenceQueue = evidenceQueue,
         _debugLog = debugLog ?? NoopDebugLogService(),
-        _voicePrompt = voicePrompt ?? const NoopVoicePromptService(),
         _zoneThreshold = zoneThreshold ?? const ZoneThresholdService(),
         _timestampService = timestampService ?? const LocalTimestampService(),
         _zoneType = zoneType;
@@ -62,14 +58,11 @@ class CaptureViewModel extends ChangeNotifier {
   final BuildEvidencePacketUseCase? _buildEvidencePacket;
   final EvidenceQueueRepository? _evidenceQueue;
   final DebugLogService _debugLog;
-  final VoicePromptService _voicePrompt;
   final ZoneThresholdService _zoneThreshold;
   final TimestampService _timestampService;
   final ZoneType _zoneType;
 
   StreamSubscription<GuardState>? _guardSub;
-  AppLocalizations? _l10n;
-  GuardState? _lastPromptedGuard;
 
   GuardState _guardState = GuardState.ok;
   bool _isRecording = false;
@@ -88,17 +81,11 @@ class CaptureViewModel extends ChangeNotifier {
   EvidencePacket? get lastEvidencePacket => _lastEvidencePacket;
   int? get lastQueueId => _lastQueueId;
   String? get errorMessage => _errorMessage;
-  bool get canRecord => _guardState == GuardState.ok && !_busy;
+  bool get canRecord => !_busy;
 
   double get zoneThresholdDb {
     final isNight = _timestampService.isNight(DateTime.now());
     return _zoneThreshold.limitFor(_zoneType, isNight: isNight);
-  }
-
-  /// Binds localized voice prompt strings from the view layer.
-  void bindVoicePrompts(AppLocalizations l10n) {
-    _l10n = l10n;
-    unawaited(_speakGuardState(_guardState));
   }
 
   Future<void> initialize() async {
@@ -106,35 +93,12 @@ class CaptureViewModel extends ChangeNotifier {
     _guardSub = _sensorGuard.guardStateStream.listen((state) {
       _guardState = state;
       notifyListeners();
-      unawaited(_speakGuardState(state));
     });
     _guardState = _sensorGuard.currentState;
     notifyListeners();
-    unawaited(_speakGuardState(_guardState));
-  }
-
-  Future<void> _speakGuardState(GuardState state) async {
-    final l10n = _l10n;
-    if (l10n == null || _lastPromptedGuard == state) {
-      return;
-    }
-    _lastPromptedGuard = state;
-    final text = switch (state) {
-      GuardState.ok => l10n.voicePromptReady,
-      GuardState.muffled => l10n.voicePromptMuffled,
-      GuardState.pocketed => l10n.voicePromptPocketed,
-      GuardState.obscured => l10n.voicePromptObscured,
-    };
-    await _voicePrompt.speak(text);
   }
 
   Future<void> record({int durationSeconds = 15}) async {
-    if (!canRecord) {
-      _errorMessage = 'Cannot record: guard state is $_guardState';
-      notifyListeners();
-      return;
-    }
-
     _busy = true;
     _isRecording = true;
     _errorMessage = null;
@@ -203,11 +167,6 @@ class CaptureViewModel extends ChangeNotifier {
             data: {'queue_id': _lastQueueId},
           );
         }
-      }
-
-      final l10n = _l10n;
-      if (l10n != null) {
-        await _voicePrompt.speak(l10n.voicePromptCaptureComplete);
       }
 
       await appLogInfo(

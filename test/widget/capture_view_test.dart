@@ -9,9 +9,9 @@ import 'package:provider/provider.dart';
 import '../fakes/fake_capture_services.dart';
 
 void main() {
-  testWidgets('CaptureView shows guard banner and disabled record when muffled', (tester) async {
+  testWidgets('CaptureView shows advisory banner when unsteady but record stays enabled', (tester) async {
     final vm = CaptureViewModel(
-      sensorGuard: FakeSensorGuardService(initialState: GuardState.muffled),
+      sensorGuard: FakeSensorGuardService(initialState: GuardState.unsteady),
     );
 
     await tester.pumpWidget(
@@ -28,11 +28,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('capture_view')), findsOneWidget);
-    expect(find.textContaining('muffled'), findsOneWidget);
+    expect(find.textContaining('hold steady'), findsOneWidget);
 
     final recordButton = find.byKey(const ValueKey('capture_record_button'));
     final button = tester.widget<FilledButton>(recordButton);
-    expect(button.onPressed, isNull);
+    expect(button.onPressed, isNotNull);
   });
 
   testWidgets('record button meets 48dp minimum touch target', (tester) async {

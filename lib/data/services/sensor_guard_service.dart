@@ -15,51 +15,21 @@ class AccelSample {
   double get magnitude => sqrt(x * x + y * y + z * z);
 }
 
-/// A single gyroscope reading (rad/s).
-class GyroSample {
-  const GyroSample({required this.x, required this.y, required this.z});
-
-  final double x;
-  final double y;
-  final double z;
-
-  double get magnitude => sqrt(x * x + y * y + z * z);
-}
-
-/// Evaluates device posture from accelerometer and gyroscope samples.
+/// Evaluates device posture from accelerometer variance (advisory only).
 GuardState evaluateGuardState({
   required List<AccelSample> accelSamples,
-  required List<GyroSample> gyroSamples,
 }) {
-  if (accelSamples.isEmpty) {
-    return GuardState.obscured;
+  if (accelSamples.length < 5) {
+    return GuardState.ok;
   }
 
   final magnitudes = accelSamples.map((s) => s.magnitude).toList();
   final meanMag = _mean(magnitudes);
   final variance = _variance(magnitudes, meanMag);
 
-  final avgGyro = gyroSamples.isEmpty
-      ? 0.0
-      : _mean(gyroSamples.map((s) => s.magnitude).toList());
-
-  final avgZ = _mean(accelSamples.map((s) => s.z.abs()).toList());
-  final avgX = _mean(accelSamples.map((s) => s.x.abs()).toList());
-  final avgY = _mean(accelSamples.map((s) => s.y.abs()).toList());
-
-  // Pocketed: phone flat, z-axis dominant, very low motion.
-  if (avgZ > avgX * 1.5 && avgZ > avgY * 1.5 && variance < 0.05) {
-    return GuardState.pocketed;
-  }
-
-  // Muffled: near-zero motion and gyro, device likely covered.
-  if (variance < 0.02 && avgGyro < 0.1) {
-    return GuardState.muffled;
-  }
-
-  // Obscured: excessive handling vibration.
-  if (variance > 2.0 || avgGyro > 3.0) {
-    return GuardState.obscured;
+  // Excessive handling vibration → advisory banner; capture is never blocked.
+  if (variance > 2.0) {
+    return GuardState.unsteady;
   }
 
   return GuardState.ok;
@@ -116,18 +86,16 @@ class StubSensorGuardService implements SensorGuardService {
   }
 }
 
-/// Production sensor guard using device accelerometer and gyroscope.
+/// Production sensor guard using device accelerometer only.
 class SensorsPlusGuardService implements SensorGuardService {
   SensorsPlusGuardService();
 
   static const int _windowSize = 20;
 
   final _accelBuffer = <AccelSample>[];
-  final _gyroBuffer = <GyroSample>[];
   final _controller = StreamController<GuardState>.broadcast();
 
   StreamSubscription<AccelerometerEvent>? _accelSub;
-  StreamSubscription<GyroscopeEvent>? _gyroSub;
 
   @override
   GuardState currentState = GuardState.ok;
@@ -144,23 +112,13 @@ class SensorsPlusGuardService implements SensorGuardService {
       }
       _evaluate();
     });
-    _gyroSub = gyroscopeEventStream().listen((event) {
-      _gyroBuffer.add(GyroSample(x: event.x, y: event.y, z: event.z));
-      if (_gyroBuffer.length > _windowSize) {
-        _gyroBuffer.removeAt(0);
-      }
-      _evaluate();
-    });
   }
 
   void _evaluate() {
     if (_accelBuffer.length < 5) {
       return;
     }
-    final state = evaluateGuardState(
-      accelSamples: _accelBuffer,
-      gyroSamples: _gyroBuffer,
-    );
+    final state = evaluateGuardState(accelSamples: _accelBuffer);
     if (state != currentState) {
       currentState = state;
       _controller.add(state);
@@ -170,8 +128,6 @@ class SensorsPlusGuardService implements SensorGuardService {
   @override
   Future<void> stopMonitoring() async {
     await _accelSub?.cancel();
-    await _gyroSub?.cancel();
     _accelBuffer.clear();
-    _gyroBuffer.clear();
   }
 }

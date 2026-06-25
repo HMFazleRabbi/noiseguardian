@@ -9,8 +9,8 @@ import '../fakes/fake_capture_services.dart';
 
 void main() {
   group('CaptureViewModel', () {
-    test('blocks recording when guard is not ok', () async {
-      final guard = FakeSensorGuardService(initialState: GuardState.muffled);
+    test('records even when guard is unsteady (advisory only)', () async {
+      final guard = FakeSensorGuardService(initialState: GuardState.unsteady);
       final capture = FakeAudioCaptureService();
       final vm = CaptureViewModel(
         sensorGuard: guard,
@@ -20,8 +20,9 @@ void main() {
       await vm.initialize();
       await vm.record();
 
-      expect(capture.recordCallCount, 0);
-      expect(vm.errorMessage, isNotNull);
+      expect(capture.recordCallCount, 1);
+      expect(vm.guardState, GuardState.unsteady);
+      expect(vm.errorMessage, isNull);
     });
 
     test('full flow produces classification result and purges audio', () async {

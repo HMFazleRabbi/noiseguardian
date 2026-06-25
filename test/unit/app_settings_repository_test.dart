@@ -16,14 +16,8 @@ void main() {
       expect(repository.useMockDoe, isTrue);
     });
 
-    test('lowDataMode defaults false', () {
-      expect(repository.lowDataMode, isFalse);
-    });
-
-    test('persists lowDataMode and locale', () async {
-      await repository.setLowDataMode(true);
+    test('persists locale', () async {
       await repository.setLocaleCode('bn');
-      expect(repository.lowDataMode, isTrue);
       expect(repository.localeCode, 'bn');
     });
 

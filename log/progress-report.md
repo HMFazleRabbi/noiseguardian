@@ -18,11 +18,25 @@ NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acousti
 | MVP Stage | Scope | Status |
 |-----------|-------|--------|
 | 1 | Safety harness + remove Heatmap | **Complete** |
-| 2 | Remove Voice/TTS + Low-data; simplify Sensor Guard | Not started |
+| 2 | Remove Voice/TTS + Low-data; simplify Sensor Guard | **Complete** |
 | 3 | Remove l10n → English strings | Not started |
 | 4 | Remove Sync/Queue → ReportRepository | Not started |
 | 5 | Slim crypto + SHA-256 packet + local export | Not started |
 | 6 | YAMNet edge AI + release hardening | Not started |
+
+### MVP Stage 2 — Remove Voice/TTS & Low-data; Simplify Sensor Guard
+
+| Deliverable | Status |
+|-------------|--------|
+| Delete `VoicePromptService` + remove `flutter_tts` dep | Done |
+| Remove low-data Wi-Fi gate from settings + `SyncEvidenceUseCase` | Done |
+| `GuardState` simplified to `{ ok, unsteady }` | Done |
+| Accelerometer-only sensor guard (advisory, never blocks capture) | Done |
+| Capture record button enabled even when `unsteady` | Done |
+
+**Quality gates (MVP Stage 2):** `flutter analyze` 0 errors · **107 / 107 tests** · debug APK (arm64) builds
+
+---
 
 ### MVP Stage 1 — Safety Harness & Heatmap Removal
 
@@ -115,17 +129,17 @@ test/widget/settings_view_test.dart            — 1 test
 
 ---
 
-## Next Up — MVP Stage 2 (Voice/Low-data removal + Sensor Guard)
+## Next Up — MVP Stage 3 (Remove l10n → English strings)
 
 **Deliverables:**
 
-- Remove `VoicePromptService` + `flutter_tts`
-- Remove low-data Wi-Fi gate toggle
-- Simplify `SensorGuardService` to accelerometer advisory only
+- Populate `lib/ui/core/strings.dart` from `app_en.arb`
+- Replace all `AppLocalizations` call-sites
+- Delete l10n config, ARB files, `AppLocaleNotifier`, locale selector
 
 ---
 
-## Next Up (Original) — Stage 7 (Hardening & Release) — superseded by MVP descope
+## Next Up (Original) — MVP Stage 2 — superseded
 
 **Deliverables:**
 

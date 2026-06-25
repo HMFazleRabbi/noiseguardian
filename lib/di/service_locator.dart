@@ -26,7 +26,6 @@ import 'package:noise_guardian/data/services/sync_service.dart';
 import 'package:noise_guardian/data/services/tflite_classifier.dart';
 import 'package:noise_guardian/data/services/timestamp_service.dart';
 import 'package:noise_guardian/data/services/violation_evaluator.dart';
-import 'package:noise_guardian/data/services/voice_prompt_service.dart';
 import 'package:noise_guardian/data/services/zone_threshold_service.dart';
 import 'package:noise_guardian/domain/use_cases/build_evidence_packet_use_case.dart';
 import 'package:noise_guardian/domain/use_cases/sync_evidence_use_case.dart';
@@ -51,7 +50,6 @@ void configureDependencies({
   LaeqService? laeqService,
   SyncService? syncService,
   ConnectivityService? connectivityService,
-  VoicePromptService? voicePromptService,
   AppLocaleNotifier? appLocaleNotifier,
   PdfExportService? pdfExportService,
   DebugLogService? debugLogService,
@@ -123,9 +121,6 @@ void configureDependencies({
   );
   getIt.registerLazySingleton<AudioPurgeService>(
     () => audioPurgeService ?? const AudioPurgeService(),
-  );
-  getIt.registerLazySingleton<VoicePromptService>(
-    () => voicePromptService ?? const NoopVoicePromptService(),
   );
   getIt.registerLazySingleton<PdfExportService>(
     () => pdfExportService ?? const PdfExportService(),
@@ -211,11 +206,6 @@ void configureDependencies({
         syncEvidenceUseCase ??
         SyncEvidenceUseCase(
           syncService: getIt<SyncService>(),
-          settings: getIt.isRegistered<AppSettingsRepository>()
-              ? getIt<AppSettingsRepository>()
-              : null,
-          connectivity: getIt<ConnectivityService>(),
-          debugLog: getIt<DebugLogService>(),
         ),
   );
 
@@ -231,7 +221,6 @@ void configureDependencies({
       buildEvidencePacket: getIt<BuildEvidencePacketUseCase>(),
       evidenceQueue: getIt<EvidenceQueueRepository>(),
       debugLog: getIt<DebugLogService>(),
-      voicePrompt: getIt<VoicePromptService>(),
       zoneThreshold: getIt<ZoneThresholdService>(),
       timestampService: getIt<TimestampService>(),
     ),
@@ -262,7 +251,6 @@ Future<void> configureDependenciesAsync({
   CalibrationService? calibrationService,
   SyncService? syncService,
   ConnectivityService? connectivityService,
-  VoicePromptService? voicePromptService,
   DebugLogService? debugLogService,
   SensorGuardService? sensorGuardService,
   AudioCaptureService? audioCaptureService,
@@ -318,7 +306,6 @@ Future<void> configureDependenciesAsync({
     syncService: syncService,
     connectivityService:
         connectivityService ?? ConnectivityPlusService(),
-    voicePromptService: voicePromptService ?? FlutterTtsVoicePromptService(),
     debugLogService: debugLogService,
     sensorGuardService: sensorGuardService,
     audioCaptureService: audioCaptureService,
@@ -347,9 +334,6 @@ Future<void> resetDependencies() async {
   if (getIt.isRegistered<DebugLogService>()) {
     await getIt<DebugLogService>().dispose();
   }
-  if (getIt.isRegistered<VoicePromptService>()) {
-    await getIt<VoicePromptService>().dispose();
-  }
   if (getIt.isRegistered<http.Client>()) {
     getIt<http.Client>().close();
   }
@@ -365,7 +349,6 @@ void _unregisterStageServices() {
   _unregisterIfNeeded<LaeqService>();
   _unregisterIfNeeded<SyncService>();
   _unregisterIfNeeded<ConnectivityService>();
-  _unregisterIfNeeded<VoicePromptService>();
   _unregisterIfNeeded<PdfExportService>();
   _unregisterIfNeeded<DebugLogService>();
   _unregisterIfNeeded<SensorGuardService>();

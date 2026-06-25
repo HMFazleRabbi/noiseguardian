@@ -29,14 +29,12 @@ class SettingsViewModel extends ChangeNotifier {
   final AppLocaleNotifier? _localeNotifier;
   final PdfExportService _pdfExport;
 
-  bool _lowDataMode = false;
   bool _useMockDoe = true;
   String? _localeCode;
   bool _loading = true;
   String? _errorMessage;
   QueuedEvidence? _lastSynced;
 
-  bool get lowDataMode => _lowDataMode;
   bool get useMockDoe => _useMockDoe;
   String? get localeCode => _localeCode;
   bool get loading => _loading;
@@ -48,7 +46,6 @@ class SettingsViewModel extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
     try {
-      _lowDataMode = _settings.lowDataMode;
       _useMockDoe = _settings.useMockDoe;
       _localeCode = _settings.localeCode;
       await _loadLastSynced();
@@ -69,12 +66,6 @@ class SettingsViewModel extends ChangeNotifier {
     }
     synced.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     _lastSynced = synced.first;
-  }
-
-  Future<void> setLowDataMode(bool value) async {
-    _lowDataMode = value;
-    await _settings.setLowDataMode(value);
-    notifyListeners();
   }
 
   Future<void> setLocaleCode(String code) async {
