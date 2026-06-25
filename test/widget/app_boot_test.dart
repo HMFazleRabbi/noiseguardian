@@ -8,7 +8,7 @@ import 'package:noise_guardian/di/service_locator.dart';
 import 'package:noise_guardian/router/app_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../fakes/fake_evidence_queue_repository.dart';
+import '../fakes/fake_report_repository.dart';
 
 void main() {
   setUp(() async {
@@ -18,7 +18,7 @@ void main() {
       consentRepository: ConsentRepository(prefs),
       appSettingsRepository: AppSettingsRepository(prefs),
       sensorGuardService: StubSensorGuardService(),
-      evidenceQueueRepository: FakeEvidenceQueueRepository(),
+      reportRepository: FakeReportRepository(),
     );
   });
 
@@ -33,9 +33,9 @@ void main() {
     expect(find.byKey(const ValueKey('capture_view')), findsOneWidget);
     expect(find.byKey(const ValueKey('nav_capture')), findsOneWidget);
 
-    await tester.tap(find.byKey(const ValueKey('nav_history')));
+    await tester.tap(find.byKey(const ValueKey('nav_reports')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('history_view')), findsOneWidget);
+    expect(find.byKey(const ValueKey('reports_view')), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('nav_settings')));
     await tester.pumpAndSettle();

@@ -4,21 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group('AppSettingsRepository', () {
-    late AppSettingsRepository repository;
-
-    setUp(() async {
+    test('can be constructed with SharedPreferences', () async {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
-      repository = AppSettingsRepository(prefs);
-    });
-
-    test('useMockDoe defaults true', () {
-      expect(repository.useMockDoe, isTrue);
-    });
-
-    test('setUseMockDoe persists', () async {
-      await repository.setUseMockDoe(false);
-      expect(repository.useMockDoe, isFalse);
+      expect(AppSettingsRepository(prefs), isA<AppSettingsRepository>());
     });
   });
 }

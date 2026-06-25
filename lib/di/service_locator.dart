@@ -1,34 +1,28 @@
 import 'package:get_it/get_it.dart';
-import 'package:http/http.dart' as http;
 import 'package:noise_guardian/data/repositories/app_settings_repository.dart';
 import 'package:noise_guardian/data/repositories/calibration_repository.dart';
 import 'package:noise_guardian/data/repositories/consent_repository.dart';
-import 'package:noise_guardian/data/repositories/evidence_queue_repository.dart';
+import 'package:noise_guardian/data/repositories/report_repository.dart';
 import 'package:noise_guardian/data/services/audio_capture_service.dart';
 import 'package:noise_guardian/data/services/audio_purge_service.dart';
 import 'package:noise_guardian/data/services/calibration_service.dart';
-import 'package:noise_guardian/data/services/connectivity_service.dart';
 import 'package:noise_guardian/data/services/debug_log_service.dart';
 import 'package:noise_guardian/data/services/encryption_service.dart';
 import 'package:noise_guardian/data/services/feature_extractor.dart';
 import 'package:noise_guardian/data/services/geolocator_gps_service.dart';
 import 'package:noise_guardian/data/services/gps_service.dart';
-import 'package:noise_guardian/data/services/http_sync_service.dart';
 import 'package:noise_guardian/data/services/key_store.dart';
 import 'package:noise_guardian/data/services/laeq_service.dart';
-import 'package:noise_guardian/data/services/local_mock_doe_sync_service.dart';
 import 'package:noise_guardian/data/services/pdf_export_service.dart';
 import 'package:noise_guardian/data/services/sensor_guard_service.dart';
 import 'package:noise_guardian/data/services/signing_service.dart';
-import 'package:noise_guardian/data/services/sync_service.dart';
 import 'package:noise_guardian/data/services/tflite_classifier.dart';
 import 'package:noise_guardian/data/services/timestamp_service.dart';
 import 'package:noise_guardian/data/services/violation_evaluator.dart';
 import 'package:noise_guardian/data/services/zone_threshold_service.dart';
 import 'package:noise_guardian/domain/use_cases/build_evidence_packet_use_case.dart';
-import 'package:noise_guardian/domain/use_cases/sync_evidence_use_case.dart';
 import 'package:noise_guardian/ui/features/capture/view_models/capture_view_model.dart';
-import 'package:noise_guardian/ui/features/history/view_models/history_view_model.dart';
+import 'package:noise_guardian/ui/features/reports/view_models/reports_view_model.dart';
 import 'package:noise_guardian/ui/features/settings/view_models/settings_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,18 +30,14 @@ final GetIt getIt = GetIt.instance;
 
 const String _deviceInstallIdKey = 'device_install_id';
 
-/// DoE portal base URL — empty disables HTTP sync until configured.
-const String kDoePortalBaseUrl = '';
-
 /// Registers application dependencies. Pass fakes in tests via overrides.
 void configureDependencies({
   CalibrationService? calibrationService,
   CalibrationRepository? calibrationRepository,
   ConsentRepository? consentRepository,
   AppSettingsRepository? appSettingsRepository,
+  ReportRepository? reportRepository,
   LaeqService? laeqService,
-  SyncService? syncService,
-  ConnectivityService? connectivityService,
   PdfExportService? pdfExportService,
   DebugLogService? debugLogService,
   SensorGuardService? sensorGuardService,
@@ -63,12 +53,7 @@ void configureDependencies({
   EncryptionService? encryptionService,
   KeyStore? keyStore,
   BuildEvidencePacketUseCase? buildEvidencePacketUseCase,
-  EvidenceQueueRepository? evidenceQueueRepository,
-  SyncEvidenceUseCase? syncEvidenceUseCase,
-  http.Client? httpClient,
-  String? doePortalBaseUrl,
   String? deviceInstallId,
-  bool? useMockDoe,
   bool hasConsented = true,
 }) {
   _unregisterStageServices();
@@ -82,6 +67,10 @@ void configureDependencies({
   if (appSettingsRepository != null) {
     getIt.registerLazySingleton<AppSettingsRepository>(() => appSettingsRepository);
   }
+
+  getIt.registerLazySingleton<ReportRepository>(
+    () => reportRepository ?? InMemoryReportRepository(),
+  );
 
   getIt.registerLazySingleton<CalibrationService>(
     () {
@@ -117,9 +106,6 @@ void configureDependencies({
   );
   getIt.registerLazySingleton<PdfExportService>(
     () => pdfExportService ?? const PdfExportService(),
-  );
-  getIt.registerLazySingleton<ConnectivityService>(
-    () => connectivityService ?? const AlwaysWifiConnectivityService(),
   );
 
   getIt.registerLazySingleton<TimestampService>(
@@ -160,48 +146,6 @@ void configureDependencies({
         ),
   );
 
-  getIt.registerLazySingleton<EvidenceQueueRepository>(
-    () {
-      if (evidenceQueueRepository != null) {
-        return evidenceQueueRepository;
-      }
-      return InMemoryEvidenceQueueRepository(
-        encryption: getIt<EncryptionService>(),
-      );
-    },
-  );
-
-  getIt.registerLazySingleton<http.Client>(
-    () => httpClient ?? http.Client(),
-  );
-
-  final effectiveUseMockDoe = useMockDoe ??
-      (appSettingsRepository?.useMockDoe ?? true);
-  final portalUrl = doePortalBaseUrl ?? kDoePortalBaseUrl;
-
-  getIt.registerLazySingleton<SyncService>(
-    () {
-      if (syncService != null) {
-        return syncService;
-      }
-      if (effectiveUseMockDoe || portalUrl.isEmpty) {
-        return LocalMockDoeSyncService(queue: getIt<EvidenceQueueRepository>());
-      }
-      return HttpSyncService(
-        client: getIt<http.Client>(),
-        queue: getIt<EvidenceQueueRepository>(),
-        baseUrl: portalUrl,
-      );
-    },
-  );
-  getIt.registerLazySingleton<SyncEvidenceUseCase>(
-    () =>
-        syncEvidenceUseCase ??
-        SyncEvidenceUseCase(
-          syncService: getIt<SyncService>(),
-        ),
-  );
-
   getIt.registerFactory<CaptureViewModel>(
     () => CaptureViewModel(
       sensorGuard: getIt<SensorGuardService>(),
@@ -212,26 +156,23 @@ void configureDependencies({
       laeqService: getIt<LaeqService>(),
       calibrationService: getIt<CalibrationService>(),
       buildEvidencePacket: getIt<BuildEvidencePacketUseCase>(),
-      evidenceQueue: getIt<EvidenceQueueRepository>(),
+      reportRepository: getIt<ReportRepository>(),
       debugLog: getIt<DebugLogService>(),
       zoneThreshold: getIt<ZoneThresholdService>(),
       timestampService: getIt<TimestampService>(),
     ),
   );
-  getIt.registerFactory<HistoryViewModel>(
-    () => HistoryViewModel(
-      queue: getIt<EvidenceQueueRepository>(),
-      syncEvidence: getIt<SyncEvidenceUseCase>(),
+  getIt.registerFactory<ReportsViewModel>(
+    () => ReportsViewModel(
+      reports: getIt<ReportRepository>(),
       pdfExport: getIt<PdfExportService>(),
     ),
   );
-  if (getIt.isRegistered<AppSettingsRepository>() &&
-      getIt.isRegistered<ConsentRepository>()) {
+  if (getIt.isRegistered<ConsentRepository>()) {
     getIt.registerFactory<SettingsViewModel>(
       () => SettingsViewModel(
-        settings: getIt<AppSettingsRepository>(),
         consent: getIt<ConsentRepository>(),
-        queue: getIt<EvidenceQueueRepository>(),
+        reports: getIt<ReportRepository>(),
         pdfExport: getIt<PdfExportService>(),
       ),
     );
@@ -241,8 +182,6 @@ void configureDependencies({
 /// Production bootstrap — loads SharedPreferences then registers services.
 Future<void> configureDependenciesAsync({
   CalibrationService? calibrationService,
-  SyncService? syncService,
-  ConnectivityService? connectivityService,
   DebugLogService? debugLogService,
   SensorGuardService? sensorGuardService,
   AudioCaptureService? audioCaptureService,
@@ -257,11 +196,7 @@ Future<void> configureDependenciesAsync({
   EncryptionService? encryptionService,
   KeyStore? keyStore,
   BuildEvidencePacketUseCase? buildEvidencePacketUseCase,
-  EvidenceQueueRepository? evidenceQueueRepository,
-  SyncEvidenceUseCase? syncEvidenceUseCase,
-  http.Client? httpClient,
-  String? doePortalBaseUrl,
-  bool? useMockDoe,
+  ReportRepository? reportRepository,
 }) async {
   final prefs = await SharedPreferences.getInstance();
   final repository = CalibrationRepository(prefs);
@@ -275,22 +210,15 @@ Future<void> configureDependenciesAsync({
     await prefs.setString(_deviceInstallIdKey, deviceInstallId);
   }
 
-  final queue = evidenceQueueRepository ??
-      SqfliteEvidenceQueueRepository(
-        encryption: encryptionService ?? AesEncryptionService(
-          keyStore: keyStore ?? FlutterSecureKeyStore(),
-        ),
-      );
-  await queue.init();
+  final reports = reportRepository ?? FileReportRepository();
+  await reports.init();
 
   configureDependencies(
     calibrationService: calibrationService,
     calibrationRepository: repository,
     consentRepository: consentRepository,
     appSettingsRepository: appSettingsRepository,
-    syncService: syncService,
-    connectivityService:
-        connectivityService ?? ConnectivityPlusService(),
+    reportRepository: reports,
     debugLogService: debugLogService,
     sensorGuardService: sensorGuardService,
     audioCaptureService: audioCaptureService,
@@ -305,21 +233,13 @@ Future<void> configureDependenciesAsync({
     encryptionService: encryptionService,
     keyStore: keyStore,
     buildEvidencePacketUseCase: buildEvidencePacketUseCase,
-    evidenceQueueRepository: queue,
-    syncEvidenceUseCase: syncEvidenceUseCase,
-    httpClient: httpClient,
-    doePortalBaseUrl: doePortalBaseUrl,
     deviceInstallId: deviceInstallId,
-    useMockDoe: useMockDoe ?? appSettingsRepository.useMockDoe,
   );
 }
 
 Future<void> resetDependencies() async {
   if (getIt.isRegistered<DebugLogService>()) {
     await getIt<DebugLogService>().dispose();
-  }
-  if (getIt.isRegistered<http.Client>()) {
-    getIt<http.Client>().close();
   }
   _unregisterStageServices();
 }
@@ -329,9 +249,8 @@ void _unregisterStageServices() {
   _unregisterIfNeeded<CalibrationRepository>();
   _unregisterIfNeeded<ConsentRepository>();
   _unregisterIfNeeded<AppSettingsRepository>();
+  _unregisterIfNeeded<ReportRepository>();
   _unregisterIfNeeded<LaeqService>();
-  _unregisterIfNeeded<SyncService>();
-  _unregisterIfNeeded<ConnectivityService>();
   _unregisterIfNeeded<PdfExportService>();
   _unregisterIfNeeded<DebugLogService>();
   _unregisterIfNeeded<SensorGuardService>();
@@ -347,11 +266,8 @@ void _unregisterStageServices() {
   _unregisterIfNeeded<SigningService>();
   _unregisterIfNeeded<EncryptionService>();
   _unregisterIfNeeded<BuildEvidencePacketUseCase>();
-  _unregisterIfNeeded<EvidenceQueueRepository>();
-  _unregisterIfNeeded<http.Client>();
-  _unregisterIfNeeded<SyncEvidenceUseCase>();
   _unregisterIfNeeded<CaptureViewModel>();
-  _unregisterIfNeeded<HistoryViewModel>();
+  _unregisterIfNeeded<ReportsViewModel>();
   _unregisterIfNeeded<SettingsViewModel>();
 }
 

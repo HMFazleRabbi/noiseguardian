@@ -9,7 +9,7 @@ import 'package:noise_guardian/router/app_routes.dart';
 import 'package:noise_guardian/app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../fakes/fake_evidence_queue_repository.dart';
+import '../fakes/fake_report_repository.dart';
 
 Future<void> _configureTestDependencies() async {
   SharedPreferences.setMockInitialValues({'pdpo_has_consented': true});
@@ -18,19 +18,19 @@ Future<void> _configureTestDependencies() async {
     consentRepository: ConsentRepository(prefs),
     appSettingsRepository: AppSettingsRepository(prefs),
     sensorGuardService: StubSensorGuardService(),
-    evidenceQueueRepository: FakeEvidenceQueueRepository(),
+    reportRepository: FakeReportRepository(),
   );
 }
 
 void main() {
   group('AppRouter', () {
-    test('shellRoutes are capture, history, settings only', () {
+    test('shellRoutes are capture, reports, settings only', () {
       expect(AppRoutes.shellRoutes, [
         AppRoutes.capture,
-        AppRoutes.history,
+        AppRoutes.reports,
         AppRoutes.settings,
       ]);
-      expect(AppRoutes.shellRoutes, isNot(contains('/heatmap')));
+      expect(AppRoutes.shellRoutes, isNot(contains('/history')));
     });
 
     tearDown(() async {
@@ -44,7 +44,7 @@ void main() {
         consentRepository: ConsentRepository(prefs),
         appSettingsRepository: AppSettingsRepository(prefs),
         sensorGuardService: StubSensorGuardService(),
-        evidenceQueueRepository: FakeEvidenceQueueRepository(),
+        reportRepository: FakeReportRepository(),
       );
       final router = createAppRouter();
 
@@ -65,7 +65,18 @@ void main() {
       expect(find.byKey(const ValueKey('capture_view')), findsOneWidget);
     });
 
-    testWidgets('resolves history route', (tester) async {
+    testWidgets('resolves reports route', (tester) async {
+      await _configureTestDependencies();
+      final router = createAppRouter();
+      router.go('/reports');
+
+      await tester.pumpWidget(NoiseGuardianApp(router: router));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('reports_view')), findsOneWidget);
+    });
+
+    testWidgets('history route is not registered', (tester) async {
       await _configureTestDependencies();
       final router = createAppRouter();
       router.go('/history');
@@ -73,7 +84,7 @@ void main() {
       await tester.pumpWidget(NoiseGuardianApp(router: router));
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('history_view')), findsOneWidget);
+      expect(find.textContaining('Route not found'), findsOneWidget);
     });
 
     testWidgets('heatmap route is not registered', (tester) async {

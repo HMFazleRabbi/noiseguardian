@@ -4,7 +4,7 @@ abstract final class AppStrings {
 
   // Navigation
   static const navCapture = 'Capture';
-  static const navHistory = 'History';
+  static const navReports = 'Reports';
   static const navSettings = 'Settings';
 
   // Capture
@@ -48,25 +48,17 @@ abstract final class AppStrings {
   static const onboardingAgree = 'I agree — start capturing';
   static const onboardingDecline = 'Decline';
 
-  // History
-  static const historyTitle = 'Evidence History';
-  static const historySync = 'Sync';
-  static const historyEmpty = 'No evidence queued yet.';
-  static const historyExportPdf = 'Export PDF';
+  // Reports
+  static const reportsTitle = 'Evidence Reports';
+  static const reportsEmpty = 'No reports saved yet.';
+  static const reportsExportPdf = 'Export PDF';
 
-  static String historyLaeqSubtitle(String value) => 'LAeq $value dB(A)';
-
-  // Queue status
-  static const statusPending = 'Pending';
-  static const statusSyncing = 'Syncing';
-  static const statusSynced = 'Synced';
-  static const statusFailed = 'Failed';
+  static String reportsLaeqSubtitle(String value) => 'LAeq $value dB(A)';
 
   // Settings
   static const settingsTitle = 'Settings';
-  static const settingsMockDoeStatus = 'Using local Mock DoE (offline sync)';
-  static const settingsExportLastPdf = 'Export last synced PDF';
-  static const settingsNoSyncedEvidence = 'No synced evidence to export.';
+  static const settingsExportLastPdf = 'Export last report PDF';
+  static const settingsNoReport = 'No saved report to export.';
   static const settingsDebugLog = 'Debug log (live)';
   static const settingsCopyPath = 'Copy path';
   static const settingsClearLog = 'Clear log';

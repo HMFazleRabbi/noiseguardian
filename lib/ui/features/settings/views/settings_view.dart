@@ -93,13 +93,13 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
     BuildContext context,
     SettingsViewModel vm,
   ) async {
-    final bytes = await vm.exportLastSyncedPdf();
+    final bytes = await vm.exportLastReportPdf();
     if (!context.mounted) {
       return;
     }
     if (bytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.settingsNoSyncedEvidence)),
+        const SnackBar(content: Text(AppStrings.settingsNoReport)),
       );
       return;
     }
@@ -134,15 +134,6 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
                         child: LinearProgressIndicator(),
                       )
                     else ...[
-                      if (vm.useMockDoe) ...[
-                        const SizedBox(height: 12),
-                        const ListTile(
-                          key: ValueKey('settings_mock_doe_indicator'),
-                          leading: Icon(Icons.cloud_off),
-                          title: Text(AppStrings.settingsMockDoeStatus),
-                          dense: true,
-                        ),
-                      ],
                       const SizedBox(height: 8),
                       FilledButton.tonal(
                         key: const ValueKey('settings_export_pdf_button'),

@@ -2,8 +2,8 @@
 abstract final class AppRoutes {
   static const onboarding = '/onboarding';
   static const capture = '/capture';
-  static const history = '/history';
+  static const reports = '/reports';
   static const settings = '/settings';
 
-  static const shellRoutes = [capture, history, settings];
+  static const shellRoutes = [capture, reports, settings];
 }

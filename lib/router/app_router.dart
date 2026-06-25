@@ -11,9 +11,9 @@ import 'package:noise_guardian/router/debug_log_navigator_observer.dart';
 import 'package:noise_guardian/ui/core/shell/scaffold_with_nav_bar.dart';
 import 'package:noise_guardian/ui/features/capture/view_models/capture_view_model.dart';
 import 'package:noise_guardian/ui/features/capture/views/capture_view.dart';
-import 'package:noise_guardian/ui/features/history/view_models/history_view_model.dart';
-import 'package:noise_guardian/ui/features/history/views/history_view.dart';
 import 'package:noise_guardian/ui/features/onboarding/views/onboarding_view.dart';
+import 'package:noise_guardian/ui/features/reports/view_models/reports_view_model.dart';
+import 'package:noise_guardian/ui/features/reports/views/reports_view.dart';
 import 'package:noise_guardian/ui/features/settings/view_models/settings_view_model.dart';
 import 'package:noise_guardian/ui/features/settings/views/settings_view.dart';
 import 'package:provider/provider.dart';
@@ -89,10 +89,10 @@ GoRouter createAppRouter() {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.history,
+                path: AppRoutes.reports,
                 builder: (context, state) => ChangeNotifierProvider(
-                  create: (_) => getIt<HistoryViewModel>(),
-                  child: const HistoryView(),
+                  create: (_) => getIt<ReportsViewModel>(),
+                  child: const ReportsView(),
                 ),
               ),
             ],

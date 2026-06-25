@@ -1,15 +1,14 @@
 import 'dart:typed_data';
 
-import 'package:noise_guardian/data/models/queued_evidence.dart';
+import 'package:noise_guardian/domain/models/evidence_packet.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-/// Exports a queued evidence row as a shareable PDF receipt (design doc §12).
+/// Exports an evidence packet as a shareable PDF receipt.
 class PdfExportService {
   const PdfExportService();
 
-  Future<Uint8List> exportEvidencePdf(QueuedEvidence evidence) async {
-    final packet = evidence.packet;
+  Future<Uint8List> exportEvidencePdf(EvidencePacket packet) async {
     final doc = pw.Document();
 
     doc.addPage(
@@ -19,17 +18,13 @@ class PdfExportService {
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             pw.Text(
-              'NoiseGuardian Evidence Receipt',
+              'NoiseGuardian Evidence Report',
               style: pw.TextStyle(
                 fontSize: 20,
                 fontWeight: pw.FontWeight.bold,
               ),
             ),
             pw.SizedBox(height: 16),
-            if (evidence.receiptId != null)
-              pw.Text('Receipt ID: ${evidence.receiptId}'),
-            pw.Text('Status: ${evidence.status.wireName}'),
-            pw.SizedBox(height: 12),
             pw.Text('LAeq: ${packet.metrics.laeqDb.toStringAsFixed(1)} dB(A)'),
             pw.Text('Noise class: ${packet.metrics.noiseClass}'),
             pw.Text('Violation: ${packet.metrics.isViolation}'),
@@ -44,8 +39,6 @@ class PdfExportService {
             pw.SizedBox(height: 12),
             pw.Text('Hash SHA-256: ${packet.security.hashSha256}'),
             pw.Text('Signature ECDSA: ${packet.security.signatureEcdsa}'),
-            if (evidence.serverSignature != null)
-              pw.Text('Server signature: ${evidence.serverSignature}'),
           ],
         ),
       ),

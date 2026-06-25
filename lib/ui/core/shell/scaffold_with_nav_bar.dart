@@ -16,7 +16,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   static const _branchRoutes = [
     AppRoutes.capture,
-    AppRoutes.history,
+    AppRoutes.reports,
     AppRoutes.settings,
   ];
 
@@ -61,9 +61,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
             label: AppStrings.navCapture,
           ),
           NavigationDestination(
-            key: ValueKey('nav_history'),
-            icon: Icon(Icons.history),
-            label: AppStrings.navHistory,
+            key: ValueKey('nav_reports'),
+            icon: Icon(Icons.description_outlined),
+            label: AppStrings.navReports,
           ),
           NavigationDestination(
             key: ValueKey('nav_settings'),

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:noise_guardian/app.dart';
 import 'package:noise_guardian/core/logging/app_log.dart';
-import 'package:noise_guardian/data/repositories/app_settings_repository.dart';
 import 'package:noise_guardian/data/services/debug_log_service.dart';
 import 'package:noise_guardian/di/service_locator.dart';
 
@@ -21,9 +20,8 @@ Future<void> main() async {
     'bootstrap',
     'Application main() started',
     data: {
-      'stage': 'Stage 6 UI/UX & Accessibility',
+      'stage': 'MVP Stage 4 — local reports',
       'loggerPath': logger.logFilePath,
-      'useMockDoe': getIt<AppSettingsRepository>().useMockDoe,
     },
   );
 

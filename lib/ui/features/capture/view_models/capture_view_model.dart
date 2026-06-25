@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:noise_guardian/core/logging/app_log.dart';
-import 'package:noise_guardian/data/repositories/evidence_queue_repository.dart';
+import 'package:noise_guardian/data/repositories/report_repository.dart';
 import 'package:noise_guardian/data/services/audio_capture_service.dart';
 import 'package:noise_guardian/data/services/audio_purge_service.dart';
 import 'package:noise_guardian/data/services/calibration_service.dart';
@@ -29,7 +29,7 @@ class CaptureViewModel extends ChangeNotifier {
     LaeqService? laeqService,
     CalibrationService? calibrationService,
     BuildEvidencePacketUseCase? buildEvidencePacket,
-    EvidenceQueueRepository? evidenceQueue,
+    ReportRepository? reportRepository,
     DebugLogService? debugLog,
     ZoneThresholdService? zoneThreshold,
     TimestampService? timestampService,
@@ -42,7 +42,7 @@ class CaptureViewModel extends ChangeNotifier {
         _laeqService = laeqService ?? const LaeqService(),
         _calibrationService = calibrationService ?? const StubCalibrationService(),
         _buildEvidencePacket = buildEvidencePacket,
-        _evidenceQueue = evidenceQueue,
+        _reportRepository = reportRepository,
         _debugLog = debugLog ?? NoopDebugLogService(),
         _zoneThreshold = zoneThreshold ?? const ZoneThresholdService(),
         _timestampService = timestampService ?? const LocalTimestampService(),
@@ -56,7 +56,7 @@ class CaptureViewModel extends ChangeNotifier {
   final LaeqService _laeqService;
   final CalibrationService _calibrationService;
   final BuildEvidencePacketUseCase? _buildEvidencePacket;
-  final EvidenceQueueRepository? _evidenceQueue;
+  final ReportRepository? _reportRepository;
   final DebugLogService _debugLog;
   final ZoneThresholdService _zoneThreshold;
   final TimestampService _timestampService;
@@ -70,7 +70,7 @@ class CaptureViewModel extends ChangeNotifier {
   double? _lastLaeq;
   ClassificationResult? _lastResult;
   EvidencePacket? _lastEvidencePacket;
-  int? _lastQueueId;
+  String? _lastReportId;
   String? _errorMessage;
 
   GuardState get guardState => _guardState;
@@ -79,7 +79,7 @@ class CaptureViewModel extends ChangeNotifier {
   double? get lastLaeq => _lastLaeq;
   ClassificationResult? get lastResult => _lastResult;
   EvidencePacket? get lastEvidencePacket => _lastEvidencePacket;
-  int? get lastQueueId => _lastQueueId;
+  String? get lastReportId => _lastReportId;
   String? get errorMessage => _errorMessage;
   bool get canRecord => !_busy;
 
@@ -105,7 +105,7 @@ class CaptureViewModel extends ChangeNotifier {
     _lastResult = null;
     _lastLaeq = null;
     _lastEvidencePacket = null;
-    _lastQueueId = null;
+    _lastReportId = null;
     notifyListeners();
 
     try {
@@ -152,19 +152,18 @@ class CaptureViewModel extends ChangeNotifier {
             'gps_obfuscated_lon': _lastEvidencePacket!.metadata.lonObfuscated,
           },
         );
-        if (_evidenceQueue != null) {
+        if (_reportRepository != null) {
           final packet = _lastEvidencePacket!;
-          final queue = _evidenceQueue;
-          _lastQueueId = await queue.enqueue(packet);
+          _lastReportId = await _reportRepository.save(packet);
           await _debugLog.info(
-            'queue',
-            'Evidence enqueued',
-            data: {'queue_id': _lastQueueId},
+            'reports',
+            'Evidence report saved',
+            data: {'report_id': _lastReportId},
           );
           await appLogInfo(
-            'queue',
-            'Packet enqueued',
-            data: {'queue_id': _lastQueueId},
+            'reports',
+            'Report saved',
+            data: {'report_id': _lastReportId},
           );
         }
       }

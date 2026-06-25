@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acoustic evidence of noise pollution in Dhaka. **Original Stages 1–6 are complete.** The project is now executing the **MVP descope** roadmap ([NG-Update-Design-Doc.md](../NG-Update-Design-Doc.md) §7). **MVP Stages 1–3 are complete** on branch `mvp-descope`.
+NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acoustic evidence of noise pollution in Dhaka. **Original Stages 1–6 are complete.** The project is now executing the **MVP descope** roadmap ([NG-Update-Design-Doc.md](../NG-Update-Design-Doc.md) §7). **MVP Stages 1–4 are complete** on branch `mvp-descope`.
 
 ---
 
@@ -20,9 +20,25 @@ NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acousti
 | 1 | Safety harness + remove Heatmap | **Complete** |
 | 2 | Remove Voice/TTS + Low-data; simplify Sensor Guard | **Complete** |
 | 3 | Remove l10n → English strings | **Complete** |
-| 4 | Remove Sync/Queue → ReportRepository | Not started |
+| 4 | Remove Sync/Queue → ReportRepository | **Complete** |
 | 5 | Slim crypto + SHA-256 packet + local export | Not started |
 | 6 | YAMNet edge AI + release hardening | Not started |
+
+### MVP Stage 4 — Remove Sync/Queue → ReportRepository
+
+| Deliverable | Status |
+|-------------|--------|
+| Add `ReportRepository` (local JSON persistence) | Done |
+| Rewire capture to save reports locally | Done |
+| Rename History → Reports (`/reports` route + nav) | Done |
+| Remove sync/queue stack + HTTP/mock DoE/connectivity | Done |
+| Drop `http`, `sqflite`, `connectivity_plus`, shelf deps | Done |
+
+**Quality gates (MVP Stage 4):** `flutter analyze` 0 errors · **88 / 88 tests** · debug APK (arm64) builds
+
+See [log/mvp-stage-4-dev-log.md](mvp-stage-4-dev-log.md).
+
+---
 
 ### MVP Stage 3 — Remove l10n → English strings
 
@@ -145,17 +161,17 @@ test/widget/settings_view_test.dart            — 1 test
 
 ---
 
-## Next Up — MVP Stage 4 (Remove Sync/Queue → ReportRepository)
+## Next Up — MVP Stage 5 (Slim crypto + SHA-256 packet + local export)
 
 **Deliverables:**
 
-- Replace encrypted queue + sync with local `ReportRepository`
-- Rename history → reports
-- Remove HTTP sync, mock DoE, connectivity gate
+- Slim `EvidencePacket` to SHA-256 only
+- Remove ECDSA/AES/keystore
+- Add JSON export/share via `share_plus`
 
 ---
 
-## Next Up — MVP Stage 3 — superseded
+## Next Up — MVP Stage 4 — superseded
 
 **Deliverables:**
 

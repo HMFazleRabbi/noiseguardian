@@ -2,37 +2,33 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:noise_guardian/data/models/saved_report.dart';
-import 'package:noise_guardian/data/repositories/consent_repository.dart';
 import 'package:noise_guardian/data/repositories/report_repository.dart';
 import 'package:noise_guardian/data/services/pdf_export_service.dart';
 
-class SettingsViewModel extends ChangeNotifier {
-  SettingsViewModel({
-    required ConsentRepository consent,
+class ReportsViewModel extends ChangeNotifier {
+  ReportsViewModel({
     required ReportRepository reports,
     PdfExportService? pdfExport,
-  })  : _consent = consent,
-        _reports = reports,
+  })  : _reports = reports,
         _pdfExport = pdfExport ?? const PdfExportService();
 
-  final ConsentRepository _consent;
   final ReportRepository _reports;
   final PdfExportService _pdfExport;
 
-  bool _loading = true;
+  List<SavedReport> _items = [];
+  bool _loading = false;
   String? _errorMessage;
-  SavedReport? _lastReport;
 
+  List<SavedReport> get items => List.unmodifiable(_items);
   bool get loading => _loading;
   String? get errorMessage => _errorMessage;
-  SavedReport? get lastReport => _lastReport;
 
   Future<void> load() async {
     _loading = true;
     _errorMessage = null;
     notifyListeners();
     try {
-      await _loadLastReport();
+      _items = await _reports.list();
     } catch (error) {
       _errorMessage = error.toString();
     } finally {
@@ -41,20 +37,7 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> _loadLastReport() async {
-    final all = await _reports.list();
-    _lastReport = all.isEmpty ? null : all.first;
-  }
-
-  Future<Uint8List?> exportLastReportPdf() async {
-    if (_lastReport == null) {
-      return null;
-    }
-    return _pdfExport.exportEvidencePdf(_lastReport!.packet);
-  }
-
-  Future<void> revokeConsent() async {
-    await _consent.setConsented(value: false);
-    notifyListeners();
+  Future<Uint8List?> exportPdf(SavedReport report) async {
+    return _pdfExport.exportEvidencePdf(report.packet);
   }
 }
