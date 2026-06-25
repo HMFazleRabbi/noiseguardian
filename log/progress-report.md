@@ -9,90 +9,80 @@
 
 ## Executive Summary
 
-NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acoustic evidence of noise pollution in Dhaka. **Stage 1 (Foundation) is complete.** The app builds, runs on a physical Android device, passes all automated tests, and is under version control on GitHub.
+NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acoustic evidence of noise pollution in Dhaka. **Stages 1–5 are complete.** The app builds, runs on a physical Android device, passes all automated tests, and is under version control on GitHub.
 
 ---
 
 ## Completed Work
 
-### Documentation (workspace)
-
-| Artifact | Status |
-|----------|--------|
-| `NoiseGuardianOutline.md` | Done |
-| `NG-Briefing.md` | Done |
-| `NoiseGuardianDesignDoc.md` | Done — 7-stage TDD roadmap, architecture, JSON schema |
-| `MOBILE_APP_AGENT_GUIDE.md` | Referenced for agent workflow |
-
-### Stage 1 — Foundation (mobile app)
+### Stage 5 — Module E: Offline Sync & Heatmap
 
 | Deliverable | Status |
 |-------------|--------|
-| Flutter project scaffold (`noise_guardian`) | Done |
-| Layered `lib/` (data / domain / ui / router / di) | Done |
-| `get_it` dependency injection | Done |
-| `go_router` shell — Capture / History / Heatmap / Settings | Done |
-| Material 3 theme (green environmental palette) | Done |
-| Bengali + English localization (`app_en.arb`, `app_bn.arb`) | Done |
-| Service stubs (`CalibrationService`, `SyncService`) | Done |
-| Test fakes and harness | Done |
-| Real-time debug file logging (`FileDebugLogService`) | Done |
-| Settings live log viewer | Done |
-| Global Flutter/platform error logging | Done |
+| `QueueStatus`, `QueuedEvidence`, `SyncReceipt`, `HeatmapCell` models | Done |
+| `BackoffPolicy` (1s→2s→4s→8s… cap 5 min) | Done |
+| `EvidenceQueueRepository` (AES-256 encrypted sqflite + in-memory) | Done |
+| `HttpSyncService` POST `/api/v1/evidence`, receipt on 201, backoff on 5xx | Done |
+| `HeatmapAggregationService` (obfuscated coords only) | Done |
+| `SyncEvidenceUseCase` | Done |
+| `HistoryViewModel` + `HistoryView` (status chips, receipt, Sync) | Done |
+| `HeatmapViewModel` + `HeatmapView` (read-only cell grid) | Done |
+| Capture flow enqueues packet after build | Done |
 
-### Quality Gates (Stage 1)
+### Stage 4 — Module D: Crypto & Evidence Packet
+
+| Deliverable | Status |
+|-------------|--------|
+| `ZoneType`, `ViolationResult`, `EvidencePacket` models (canonical JSON) | Done |
+| `ZoneThresholdService` (Residential 55/48 dB; Silent/Academic provisional) | Done |
+| `ViolationEvaluator` (day/night/restricted-hour) | Done |
+| `LocalTimestampService` (ISO-8601 + monotonic token) | Done |
+| `GeolocatorGpsService` + GPS obfuscation/`gps_hash` | Done |
+| `EcdsaSigningService` (secp256k1, secure storage) | Done |
+| `AesEncryptionService` (AES-256 CBC, queue-at-rest ready) | Done |
+| `BuildEvidencePacketUseCase` | Done |
+| Capture flow logs evidence packet hash after recording | Done |
+
+### Stage 3 — Modules B + C: Capture and Edge AI
+
+| Deliverable | Status |
+|-------------|--------|
+| `SensorGuardService`, `AudioCaptureService`, `FeatureExtractor` | Done |
+| `HeuristicClassifier`, `AudioPurgeService`, `CaptureViewModel` | Done |
+
+### Stage 2 — Module A: Calibration
+
+| Deliverable | Status |
+|-------------|--------|
+| `CalibrationService`, `LaeqService`, calibration wizard | Done |
+
+### Stage 1 — Foundation
+
+| Deliverable | Status |
+|-------------|--------|
+| Flutter scaffold, router shell, DI, theme, l10n, debug logging | Done |
+
+### Quality Gates (Stage 5)
 
 | Gate | Result |
 |------|--------|
-| `flutter analyze` | Clean |
-| `flutter test` | **16 / 16 passing** |
-| Physical device run (Samsung SM M315F, Android 12) | Verified |
-| Release APK build | Not yet requested |
-
-### Version Control
-
-| Item | Detail |
-|------|--------|
-| Initial commit | `158059c` — Stage 1 foundation |
-| Remote | `origin` → `https://github.com/HMFazleRabbi/noiseguardian.git` |
-| Branch | `main` (synced with remote) |
+| `flutter analyze` | 23 info lints only |
+| `flutter test` | **93 / 93 passing** |
 
 ---
 
-## Issues Resolved
-
-| Issue | Resolution |
-|-------|------------|
-| Red screen on device launch | Removed empty `MultiProvider` wrapper in `main.dart` |
-| Gradle disk space exhaustion | Cleared Gradle caches; user freed ~17 GB |
-| Debug connection drop on first launch | Second `flutter run` succeeded; app installs correctly |
-| `MultiProvider` not caught by tests | Added `app_boot_test.dart`; tests now pump full app entry |
-
----
-
-## Test Inventory
+## Test Inventory (Stage 5 additions)
 
 ```
-test/unit/app_router_test.dart          — 5 tests (4 routes + route constants)
-test/unit/service_locator_test.dart     — 4 tests
-test/unit/debug_log_service_test.dart   — 4 tests
-test/widget/app_boot_test.dart          — 1 test
-test/widget/scaffold_with_nav_bar_test.dart — 2 tests
-```
-
----
-
-## Debug Logging
-
-- **File:** `noise_guardian_debug.log` (app documents directory on device)
-- **Flush:** Every line written immediately for real-time tailing
-- **In-app viewer:** Settings tab → live log + copy path / clear / refresh
-- **Categories:** `bootstrap`, `router`, `navigation`, `ui`, `flutter`, `platform`, `settings`, `logger`
-
-**Pull log from connected device:**
-
-```powershell
-adb exec-out run-as gov.bd.doe.noise_guardian cat app_flutter/noise_guardian_debug.log
+test/unit/backoff_policy_test.dart           — 3 tests
+test/unit/evidence_queue_repository_test.dart — 4 tests
+test/unit/sync_service_test.dart             — 4 tests
+test/unit/heatmap_aggregation_test.dart      — 3 tests
+test/unit/history_view_model_test.dart       — 2 tests
+test/unit/heatmap_view_model_test.dart       — 1 test
+test/widget/history_view_test.dart           — 1 test
+test/widget/heatmap_view_test.dart           — 1 test
+(+ Stages 1–4 tests: 74 total across 22 files)
 ```
 
 ---
@@ -102,28 +92,25 @@ adb exec-out run-as gov.bd.doe.noise_guardian cat app_flutter/noise_guardian_deb
 | Stage | Name | Status |
 |-------|------|--------|
 | 1 | Foundation | **Complete** |
-| 2 | Module A — Calibration | Not started |
-| 3 | Modules B + C — Capture & Edge AI | Not started |
-| 4 | Module D — Crypto & Evidence Packet | Not started |
-| 5 | Module E — Offline Sync & Heatmap | Not started |
+| 2 | Module A — Calibration | **Complete** |
+| 3 | Modules B + C — Capture & Edge AI | **Complete** |
+| 4 | Module D — Crypto & Evidence Packet | **Complete** |
+| 5 | Module E — Offline Sync & Heatmap | **Complete** |
 | 6 | UI/UX & Accessibility | Not started |
 | 7 | Hardening & Release | Not started |
 
 ---
 
-## Next Up — Stage 2 (Calibration)
-
-**TDD tests to write first:**
-
-1. `Cd = Lref - 20 * log10(Pmeasured / Pref)` against known fixtures
-2. LAeq integration within **MAE ≤ 1.8 dB(A)** vs reference vectors
-3. Cd persisted and applied to subsequent readings
+## Next Up — Stage 6 (UI/UX & Accessibility)
 
 **Deliverables:**
 
-- `CalibrationService`, `LaeqService`, `CalibrationRepository`
-- Pink-noise asset (`assets/sounds/pink_noise.wav`)
-- Calibration wizard UI
+- Onboarding + PDPO consent flow
+- Full Bengali/English ARB strings
+- Voice-guided capture prompts (`flutter_tts`)
+- Low-data mode toggle
+- `PdfExportService`
+- Real map widget for heatmap
 
 ---
 
@@ -131,21 +118,18 @@ adb exec-out run-as gov.bd.doe.noise_guardian cat app_flutter/noise_guardian_deb
 
 | Package | Purpose |
 |---------|---------|
-| `go_router` | Declarative routing + shell navigation |
-| `get_it` | Dependency injection |
-| `provider` | Reserved for future ViewModels |
-| `flutter_localizations` / `intl` | EN + BN i18n |
-| `path_provider` | Debug log file path |
-
----
-
-## Notes for Contributors
-
-- Run all work from `noise_guardian/` directory
-- Follow TDD: red → green → refactor per stage
-- Read matching skill in `skills/skills/` before implementing (see design doc §6)
-- Do not commit secrets, keystores, or `.env` files
-- Parent workspace docs (`NoiseGuardianDesignDoc.md`, etc.) live one level above this repo
+| `sqflite` | Encrypted offline evidence queue |
+| `http` | DoE REST sync |
+| `path` | SQLite DB path joining |
+| `crypto` | SHA-256 hashing |
+| `pointycastle` | ECDSA secp256k1 signing |
+| `encrypt` | AES-256 encryption |
+| `geolocator` | Device GPS |
+| `flutter_secure_storage` | Key storage (Android Keystore) |
+| `sensors_plus` | Accelerometer/gyroscope guard |
+| `record` | 44.1 kHz PCM capture |
+| `shared_preferences` | Cd + device install ID |
+| `go_router`, `get_it`, `provider` | Routing, DI, ViewModels |
 
 ---
 

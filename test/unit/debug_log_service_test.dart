@@ -60,5 +60,21 @@ void main() {
       expect(tail.any((line) => line.contains('to be cleared')), isFalse);
       expect(tail.any((line) => line.contains('Debug log cleared')), isTrue);
     });
+
+    test('handles concurrent writes without losing lines', () async {
+      await Future.wait([
+        logger.info('test', 'concurrent-a'),
+        logger.info('test', 'concurrent-b'),
+        logger.info('test', 'concurrent-c'),
+        logger.warn('test', 'concurrent-d'),
+      ]);
+
+      final file = File('${tempDir.path}/noise_guardian_debug.log');
+      final content = await file.readAsString();
+      expect(content, contains('concurrent-a'));
+      expect(content, contains('concurrent-b'));
+      expect(content, contains('concurrent-c'));
+      expect(content, contains('concurrent-d'));
+    });
   });
 }

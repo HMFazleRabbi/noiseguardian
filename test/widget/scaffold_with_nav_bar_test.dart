@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:noise_guardian/app.dart';
+import 'package:noise_guardian/data/services/sensor_guard_service.dart';
+import 'package:noise_guardian/di/service_locator.dart';
 import 'package:noise_guardian/router/app_router.dart';
+
+import '../fakes/fake_evidence_queue_repository.dart';
 
 void main() {
   group('ScaffoldWithNavBar', () {
+    setUp(() {
+      configureDependencies(
+        sensorGuardService: StubSensorGuardService(),
+        evidenceQueueRepository: FakeEvidenceQueueRepository(),
+      );
+    });
+
+    tearDown(() async {
+      await resetDependencies();
+    });
+
     testWidgets('renders four navigation destinations', (tester) async {
       final router = createAppRouter();
 

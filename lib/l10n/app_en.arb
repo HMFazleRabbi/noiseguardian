@@ -35,5 +35,94 @@
   "settingsTitle": "Settings",
   "@settingsTitle": {
     "description": "Title for the settings screen"
+  },
+  "calibrationTitle": "Microphone Calibration",
+  "@calibrationTitle": {
+    "description": "Title for calibration wizard"
+  },
+  "calibrationIntro": "Play reference pink noise in a quiet space. The app measures your microphone response and stores a correction factor (Cd).",
+  "@calibrationIntro": {
+    "description": "Calibration wizard introduction"
+  },
+  "calibrationStart": "Start calibration",
+  "@calibrationStart": {
+    "description": "Button to begin calibration"
+  },
+  "calibrationDone": "Done",
+  "@calibrationDone": {
+    "description": "Button to close calibration wizard after success"
+  },
+  "calibrationRetry": "Calibrate again",
+  "@calibrationRetry": {
+    "description": "Button to restart calibration"
+  },
+  "calibrationOpen": "Calibrate microphone",
+  "@calibrationOpen": {
+    "description": "Settings entry to open calibration wizard"
+  },
+  "calibrationCurrentCd": "Current Cd: {value} dB",
+  "@calibrationCurrentCd": {
+    "description": "Shows stored correction factor",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "calibrationSuccess": "Calibration saved. Cd = {value} dB",
+  "@calibrationSuccess": {
+    "description": "Success message after calibration",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "captureRecord": "Record evidence",
+  "@captureRecord": {
+    "description": "Button to start audio capture"
+  },
+  "captureLaeq": "LAeq: {value} dB(A)",
+  "@captureLaeq": {
+    "description": "Displayed A-weighted level",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "captureClassLabel": "Class: {label}",
+  "@captureClassLabel": {
+    "description": "Classification result label",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "captureConfidence": "Confidence: {value}%",
+  "@captureConfidence": {
+    "description": "Classification confidence percentage",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "guardOk": "Ready to capture — hold phone upright at ~1.5 m.",
+  "@guardOk": {
+    "description": "Guard state OK message"
+  },
+  "guardMuffled": "Device appears muffled — uncover the microphone.",
+  "@guardMuffled": {
+    "description": "Guard state muffled message"
+  },
+  "guardPocketed": "Phone appears pocketed — remove and hold upright.",
+  "@guardPocketed": {
+    "description": "Guard state pocketed message"
+  },
+  "guardObscured": "Excessive handling detected — hold steady.",
+  "@guardObscured": {
+    "description": "Guard state obscured message"
   }
 }

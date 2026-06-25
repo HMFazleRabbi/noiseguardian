@@ -6,6 +6,9 @@ import 'package:noise_guardian/core/logging/app_log.dart';
 import 'package:noise_guardian/data/services/debug_log_service.dart';
 import 'package:noise_guardian/di/service_locator.dart';
 import 'package:noise_guardian/l10n/app_localizations.dart';
+import 'package:noise_guardian/ui/features/calibration/view_models/calibration_view_model.dart';
+import 'package:noise_guardian/ui/features/calibration/views/calibration_wizard_view.dart';
+import 'package:provider/provider.dart';
 import 'package:noise_guardian/ui/core/widgets/logged_stateful_widget.dart';
 
 class SettingsView extends StatefulWidget {
@@ -101,6 +104,20 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 12),
+            FilledButton.tonal(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => ChangeNotifierProvider(
+                      create: (_) => CalibrationViewModel(),
+                      child: const CalibrationWizardView(),
+                    ),
+                  ),
+                );
+              },
+              child: Text(l10n.calibrationOpen),
+            ),
+            const SizedBox(height: 16),
             Text('Debug log (live)', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             SelectableText(

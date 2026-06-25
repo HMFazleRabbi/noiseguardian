@@ -151,6 +151,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get settingsTitle;
+
+  /// Title for calibration wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone Calibration'**
+  String get calibrationTitle;
+
+  /// Calibration wizard introduction
+  ///
+  /// In en, this message translates to:
+  /// **'Play reference pink noise in a quiet space. The app measures your microphone response and stores a correction factor (Cd).'**
+  String get calibrationIntro;
+
+  /// Button to begin calibration
+  ///
+  /// In en, this message translates to:
+  /// **'Start calibration'**
+  String get calibrationStart;
+
+  /// Button to close calibration wizard after success
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get calibrationDone;
+
+  /// Button to restart calibration
+  ///
+  /// In en, this message translates to:
+  /// **'Calibrate again'**
+  String get calibrationRetry;
+
+  /// Settings entry to open calibration wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Calibrate microphone'**
+  String get calibrationOpen;
+
+  /// Shows stored correction factor
+  ///
+  /// In en, this message translates to:
+  /// **'Current Cd: {value} dB'**
+  String calibrationCurrentCd(String value);
+
+  /// Success message after calibration
+  ///
+  /// In en, this message translates to:
+  /// **'Calibration saved. Cd = {value} dB'**
+  String calibrationSuccess(String value);
+
+  /// Button to start audio capture
+  ///
+  /// In en, this message translates to:
+  /// **'Record evidence'**
+  String get captureRecord;
+
+  /// Displayed A-weighted level
+  ///
+  /// In en, this message translates to:
+  /// **'LAeq: {value} dB(A)'**
+  String captureLaeq(String value);
+
+  /// Classification result label
+  ///
+  /// In en, this message translates to:
+  /// **'Class: {label}'**
+  String captureClassLabel(String label);
+
+  /// Classification confidence percentage
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence: {value}%'**
+  String captureConfidence(String value);
+
+  /// Guard state OK message
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to capture — hold phone upright at ~1.5 m.'**
+  String get guardOk;
+
+  /// Guard state muffled message
+  ///
+  /// In en, this message translates to:
+  /// **'Device appears muffled — uncover the microphone.'**
+  String get guardMuffled;
+
+  /// Guard state pocketed message
+  ///
+  /// In en, this message translates to:
+  /// **'Phone appears pocketed — remove and hold upright.'**
+  String get guardPocketed;
+
+  /// Guard state obscured message
+  ///
+  /// In en, this message translates to:
+  /// **'Excessive handling detected — hold steady.'**
+  String get guardObscured;
 }
 
 class _AppLocalizationsDelegate

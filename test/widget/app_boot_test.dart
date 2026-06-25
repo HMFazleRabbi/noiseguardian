@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:noise_guardian/app.dart';
+import 'package:noise_guardian/data/services/sensor_guard_service.dart';
 import 'package:noise_guardian/di/service_locator.dart';
 import 'package:noise_guardian/router/app_router.dart';
 
 void main() {
   setUp(() {
-    configureDependencies();
+    configureDependencies(sensorGuardService: StubSensorGuardService());
   });
 
   tearDown(() async {

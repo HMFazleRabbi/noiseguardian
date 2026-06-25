@@ -10,7 +10,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final debugLog = FileDebugLogService();
-  configureDependencies(debugLogService: debugLog);
+  await configureDependenciesAsync(debugLogService: debugLog);
 
   final logger = getIt<DebugLogService>();
   await logger.init();
@@ -20,7 +20,7 @@ Future<void> main() async {
     'bootstrap',
     'Application main() started',
     data: {
-      'stage': 'Stage 1 Foundation',
+      'stage': 'Stage 5 Offline Sync & Heatmap',
       'loggerPath': logger.logFilePath,
     },
   );

@@ -8,5 +8,21 @@
   "captureTitle": "প্রমাণ সংগ্রহ",
   "historyTitle": "প্রমাণের ইতিহাস",
   "heatmapTitle": "শব্দ হিটম্যাপ",
-  "settingsTitle": "সেটিংস"
+  "settingsTitle": "সেটিংস",
+  "calibrationTitle": "মাইক্রোফোন ক্যালিব্রেশন",
+  "calibrationIntro": "শান্ত স্থানে রেফারেন্স পিঙ্ক নয়েজ বাজান। অ্যাপটি আপনার মাইক্রোফোনের প্রতিক্রিয়া মাপে এবং সংশোধনী (Cd) সংরক্ষণ করে।",
+  "calibrationStart": "ক্যালিব্রেশন শুরু করুন",
+  "calibrationDone": "সম্পন্ন",
+  "calibrationRetry": "আবার ক্যালিব্রেট করুন",
+  "calibrationOpen": "মাইক্রোফোন ক্যালিব্রেট করুন",
+  "calibrationCurrentCd": "বর্তমান Cd: {value} dB",
+  "calibrationSuccess": "ক্যালিব্রেশন সংরক্ষিত। Cd = {value} dB",
+  "captureRecord": "প্রমাণ রেকর্ড করুন",
+  "captureLaeq": "LAeq: {value} dB(A)",
+  "captureClassLabel": "শ্রেণি: {label}",
+  "captureConfidence": "আত্মবিশ্বাস: {value}%",
+  "guardOk": "রেকর্ডের জন্য প্রস্তুত — ফোন সোজা ~১.৫ মি উচ্চতায় ধরুন।",
+  "guardMuffled": "ডিভাইস মাফল করা মনে হচ্ছে — মাইক্রোফোন খুলে নিন।",
+  "guardPocketed": "ফোন পকেটে মনে হচ্ছে — বের করে সোজা ধরুন।",
+  "guardObscured": "অতিরিক্ত নড়াচড়া সনাক্ত — স্থিরভাবে ধরুন।"
 }

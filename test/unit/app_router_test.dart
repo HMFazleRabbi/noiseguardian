@@ -2,15 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:noise_guardian/app.dart';
+import 'package:noise_guardian/data/services/sensor_guard_service.dart';
+import 'package:noise_guardian/di/service_locator.dart';
 import 'package:noise_guardian/router/app_routes.dart';
 import 'package:noise_guardian/router/app_router.dart';
+
+import '../fakes/fake_evidence_queue_repository.dart';
 
 void main() {
   group('AppRouter', () {
     late GoRouter router;
 
     setUp(() {
+      configureDependencies(
+        sensorGuardService: StubSensorGuardService(),
+        evidenceQueueRepository: FakeEvidenceQueueRepository(),
+      );
       router = createAppRouter();
+    });
+
+    tearDown(() async {
+      await resetDependencies();
     });
 
     Future<void> pumpApp(WidgetTester tester) async {

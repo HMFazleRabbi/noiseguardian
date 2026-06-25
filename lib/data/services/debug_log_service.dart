@@ -62,9 +62,9 @@ class FileDebugLogService implements DebugLogService {
   final StreamController<String> _lineController =
       StreamController<String>.broadcast();
 
-  IOSink? _sink;
   File? _logFile;
   bool _initialized = false;
+  Future<void> _writeQueue = Future<void>.value();
 
   static const int _maxBytes = 2 * 1024 * 1024;
 
@@ -83,7 +83,6 @@ class FileDebugLogService implements DebugLogService {
     final directory = _logDirectory ?? await getApplicationDocumentsDirectory();
     _logFile = File('${directory.path}/$fileName');
     await _rotateIfNeeded();
-    _sink = _logFile!.openWrite(mode: FileMode.append, encoding: utf8);
     _initialized = true;
 
     await _writeLine(
@@ -103,11 +102,11 @@ class FileDebugLogService implements DebugLogService {
     if (_initialized) {
       await _writeLine(LogLevel.info, 'logger', 'Debug log closing');
     }
-    await _sink?.flush();
-    await _sink?.close();
-    _sink = null;
+    await _writeQueue;
     _initialized = false;
-    await _lineController.close();
+    if (!_lineController.isClosed) {
+      await _lineController.close();
+    }
   }
 
   @override
@@ -176,16 +175,13 @@ class FileDebugLogService implements DebugLogService {
 
   @override
   Future<void> clear() async {
-    await _sink?.flush();
-    await _sink?.close();
-    _sink = null;
+    await _writeQueue;
 
     final file = _logFile;
     if (file != null && await file.exists()) {
       await file.writeAsString('', encoding: utf8);
     }
 
-    _sink = file?.openWrite(mode: FileMode.append, encoding: utf8);
     await info('logger', 'Debug log cleared');
   }
 
@@ -208,6 +204,33 @@ class FileDebugLogService implements DebugLogService {
   }
 
   Future<void> _writeLine(
+    LogLevel level,
+    String category,
+    String message, {
+    Object? error,
+    StackTrace? stackTrace,
+    Map<String, Object?>? data,
+  }) {
+    final completer = Completer<void>();
+    _writeQueue = _writeQueue.then((_) async {
+      try {
+        await _writeLineNow(
+          level,
+          category,
+          message,
+          error: error,
+          stackTrace: stackTrace,
+          data: data,
+        );
+        completer.complete();
+      } catch (e, stack) {
+        completer.completeError(e, stack);
+      }
+    });
+    return completer.future;
+  }
+
+  Future<void> _writeLineNow(
     LogLevel level,
     String category,
     String message, {
@@ -237,9 +260,20 @@ class FileDebugLogService implements DebugLogService {
       debugPrint(line);
     }
 
-    if (_initialized && _sink != null) {
-      _sink!.writeln(line);
-      await _sink!.flush();
+    final file = _logFile;
+    if (_initialized && file != null) {
+      try {
+        await file.writeAsString(
+          '$line\n',
+          mode: FileMode.append,
+          encoding: utf8,
+          flush: true,
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('Log file write failed: $e');
+        }
+      }
     }
 
     if (!_lineController.isClosed) {
