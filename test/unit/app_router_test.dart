@@ -5,6 +5,7 @@ import 'package:noise_guardian/data/repositories/consent_repository.dart';
 import 'package:noise_guardian/data/services/sensor_guard_service.dart';
 import 'package:noise_guardian/di/service_locator.dart';
 import 'package:noise_guardian/router/app_router.dart';
+import 'package:noise_guardian/router/app_routes.dart';
 import 'package:noise_guardian/app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,15 @@ Future<void> _configureTestDependencies() async {
 
 void main() {
   group('AppRouter', () {
+    test('shellRoutes are capture, history, settings only', () {
+      expect(AppRoutes.shellRoutes, [
+        AppRoutes.capture,
+        AppRoutes.history,
+        AppRoutes.settings,
+      ]);
+      expect(AppRoutes.shellRoutes, isNot(contains('/heatmap')));
+    });
+
     tearDown(() async {
       await resetDependencies();
     });
@@ -66,7 +76,7 @@ void main() {
       expect(find.byKey(const ValueKey('history_view')), findsOneWidget);
     });
 
-    testWidgets('resolves heatmap route', (tester) async {
+    testWidgets('heatmap route is not registered', (tester) async {
       await _configureTestDependencies();
       final router = createAppRouter();
       router.go('/heatmap');
@@ -74,7 +84,7 @@ void main() {
       await tester.pumpWidget(NoiseGuardianApp(router: router));
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('heatmap_view')), findsOneWidget);
+      expect(find.textContaining('Route not found'), findsOneWidget);
     });
 
     testWidgets('resolves settings route', (tester) async {

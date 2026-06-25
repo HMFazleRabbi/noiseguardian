@@ -11,8 +11,6 @@ import 'package:noise_guardian/router/debug_log_navigator_observer.dart';
 import 'package:noise_guardian/ui/core/shell/scaffold_with_nav_bar.dart';
 import 'package:noise_guardian/ui/features/capture/view_models/capture_view_model.dart';
 import 'package:noise_guardian/ui/features/capture/views/capture_view.dart';
-import 'package:noise_guardian/ui/features/heatmap/view_models/heatmap_view_model.dart';
-import 'package:noise_guardian/ui/features/heatmap/views/heatmap_view.dart';
 import 'package:noise_guardian/ui/features/history/view_models/history_view_model.dart';
 import 'package:noise_guardian/ui/features/history/views/history_view.dart';
 import 'package:noise_guardian/ui/features/onboarding/views/onboarding_view.dart';
@@ -95,17 +93,6 @@ GoRouter createAppRouter() {
                 builder: (context, state) => ChangeNotifierProvider(
                   create: (_) => getIt<HistoryViewModel>(),
                   child: const HistoryView(),
-                ),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.heatmap,
-                builder: (context, state) => ChangeNotifierProvider(
-                  create: (_) => getIt<HeatmapViewModel>(),
-                  child: const HeatmapView(),
                 ),
               ),
             ],

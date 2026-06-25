@@ -17,7 +17,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
   static const _branchRoutes = [
     AppRoutes.capture,
     AppRoutes.history,
-    AppRoutes.heatmap,
     AppRoutes.settings,
   ];
 
@@ -67,11 +66,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
             key: const ValueKey('nav_history'),
             icon: const Icon(Icons.history),
             label: l10n.navHistory,
-          ),
-          NavigationDestination(
-            key: const ValueKey('nav_heatmap'),
-            icon: const Icon(Icons.map),
-            label: l10n.navHeatmap,
           ),
           NavigationDestination(
             key: const ValueKey('nav_settings'),

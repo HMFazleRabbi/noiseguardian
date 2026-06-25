@@ -3,8 +3,7 @@ abstract final class AppRoutes {
   static const onboarding = '/onboarding';
   static const capture = '/capture';
   static const history = '/history';
-  static const heatmap = '/heatmap';
   static const settings = '/settings';
 
-  static const shellRoutes = [capture, history, heatmap, settings];
+  static const shellRoutes = [capture, history, settings];
 }

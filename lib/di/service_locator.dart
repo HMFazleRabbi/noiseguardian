@@ -15,7 +15,6 @@ import 'package:noise_guardian/data/services/encryption_service.dart';
 import 'package:noise_guardian/data/services/feature_extractor.dart';
 import 'package:noise_guardian/data/services/geolocator_gps_service.dart';
 import 'package:noise_guardian/data/services/gps_service.dart';
-import 'package:noise_guardian/data/services/heatmap_aggregation_service.dart';
 import 'package:noise_guardian/data/services/http_sync_service.dart';
 import 'package:noise_guardian/data/services/key_store.dart';
 import 'package:noise_guardian/data/services/laeq_service.dart';
@@ -32,7 +31,6 @@ import 'package:noise_guardian/data/services/zone_threshold_service.dart';
 import 'package:noise_guardian/domain/use_cases/build_evidence_packet_use_case.dart';
 import 'package:noise_guardian/domain/use_cases/sync_evidence_use_case.dart';
 import 'package:noise_guardian/ui/features/capture/view_models/capture_view_model.dart';
-import 'package:noise_guardian/ui/features/heatmap/view_models/heatmap_view_model.dart';
 import 'package:noise_guardian/ui/features/history/view_models/history_view_model.dart';
 import 'package:noise_guardian/ui/features/settings/view_models/settings_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -71,7 +69,6 @@ void configureDependencies({
   KeyStore? keyStore,
   BuildEvidencePacketUseCase? buildEvidencePacketUseCase,
   EvidenceQueueRepository? evidenceQueueRepository,
-  HeatmapAggregationService? heatmapAggregationService,
   SyncEvidenceUseCase? syncEvidenceUseCase,
   http.Client? httpClient,
   String? doePortalBaseUrl,
@@ -189,9 +186,6 @@ void configureDependencies({
   getIt.registerLazySingleton<http.Client>(
     () => httpClient ?? http.Client(),
   );
-  getIt.registerLazySingleton<HeatmapAggregationService>(
-    () => heatmapAggregationService ?? const HeatmapAggregationService(),
-  );
 
   final effectiveUseMockDoe = useMockDoe ??
       (appSettingsRepository?.useMockDoe ?? true);
@@ -249,12 +243,6 @@ void configureDependencies({
       pdfExport: getIt<PdfExportService>(),
     ),
   );
-  getIt.registerFactory<HeatmapViewModel>(
-    () => HeatmapViewModel(
-      queue: getIt<EvidenceQueueRepository>(),
-      aggregation: getIt<HeatmapAggregationService>(),
-    ),
-  );
   if (getIt.isRegistered<AppSettingsRepository>() &&
       getIt.isRegistered<ConsentRepository>()) {
     getIt.registerFactory<SettingsViewModel>(
@@ -290,7 +278,6 @@ Future<void> configureDependenciesAsync({
   KeyStore? keyStore,
   BuildEvidencePacketUseCase? buildEvidencePacketUseCase,
   EvidenceQueueRepository? evidenceQueueRepository,
-  HeatmapAggregationService? heatmapAggregationService,
   SyncEvidenceUseCase? syncEvidenceUseCase,
   http.Client? httpClient,
   String? doePortalBaseUrl,
@@ -347,7 +334,6 @@ Future<void> configureDependenciesAsync({
     keyStore: keyStore,
     buildEvidencePacketUseCase: buildEvidencePacketUseCase,
     evidenceQueueRepository: queue,
-    heatmapAggregationService: heatmapAggregationService,
     syncEvidenceUseCase: syncEvidenceUseCase,
     httpClient: httpClient,
     doePortalBaseUrl: doePortalBaseUrl,
@@ -397,11 +383,9 @@ void _unregisterStageServices() {
   _unregisterIfNeeded<BuildEvidencePacketUseCase>();
   _unregisterIfNeeded<EvidenceQueueRepository>();
   _unregisterIfNeeded<http.Client>();
-  _unregisterIfNeeded<HeatmapAggregationService>();
   _unregisterIfNeeded<SyncEvidenceUseCase>();
   _unregisterIfNeeded<CaptureViewModel>();
   _unregisterIfNeeded<HistoryViewModel>();
-  _unregisterIfNeeded<HeatmapViewModel>();
   _unregisterIfNeeded<SettingsViewModel>();
 }
 

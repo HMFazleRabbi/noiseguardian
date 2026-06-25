@@ -27,7 +27,7 @@ void main() {
       await resetDependencies();
     });
 
-    testWidgets('renders four navigation destinations', (tester) async {
+    testWidgets('renders three navigation destinations', (tester) async {
       final router = createAppRouter();
 
       await tester.pumpWidget(NoiseGuardianApp(router: router));
@@ -35,8 +35,8 @@ void main() {
 
       expect(find.byKey(const ValueKey('nav_capture')), findsOneWidget);
       expect(find.byKey(const ValueKey('nav_history')), findsOneWidget);
-      expect(find.byKey(const ValueKey('nav_heatmap')), findsOneWidget);
       expect(find.byKey(const ValueKey('nav_settings')), findsOneWidget);
+      expect(find.byKey(const ValueKey('nav_heatmap')), findsNothing);
     });
 
     testWidgets('navigates between shell tabs', (tester) async {
@@ -50,10 +50,6 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('nav_history')));
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('history_view')), findsOneWidget);
-
-      await tester.tap(find.byKey(const ValueKey('nav_heatmap')));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey('heatmap_view')), findsOneWidget);
 
       await tester.tap(find.byKey(const ValueKey('nav_settings')));
       await tester.pumpAndSettle();
