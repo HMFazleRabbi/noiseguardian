@@ -1,0 +1,39 @@
+{
+  "@@locale": "en",
+  "appTitle": "NoiseGuardian",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "navCapture": "Capture",
+  "@navCapture": {
+    "description": "Bottom navigation label for capture tab"
+  },
+  "navHistory": "History",
+  "@navHistory": {
+    "description": "Bottom navigation label for history tab"
+  },
+  "navHeatmap": "Heatmap",
+  "@navHeatmap": {
+    "description": "Bottom navigation label for heatmap tab"
+  },
+  "navSettings": "Settings",
+  "@navSettings": {
+    "description": "Bottom navigation label for settings tab"
+  },
+  "captureTitle": "Capture Evidence",
+  "@captureTitle": {
+    "description": "Title for the capture screen"
+  },
+  "historyTitle": "Evidence History",
+  "@historyTitle": {
+    "description": "Title for the history screen"
+  },
+  "heatmapTitle": "Noise Heatmap",
+  "@heatmapTitle": {
+    "description": "Title for the heatmap screen"
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title for the settings screen"
+  }
+}
