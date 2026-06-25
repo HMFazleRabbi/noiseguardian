@@ -8,6 +8,8 @@ import 'package:noise_guardian/di/service_locator.dart';
 import 'package:noise_guardian/router/app_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../fakes/fake_evidence_queue_repository.dart';
+
 void main() {
   setUp(() async {
     SharedPreferences.setMockInitialValues({'pdpo_has_consented': true});
@@ -16,6 +18,7 @@ void main() {
       consentRepository: ConsentRepository(prefs),
       appSettingsRepository: AppSettingsRepository(prefs),
       sensorGuardService: StubSensorGuardService(),
+      evidenceQueueRepository: FakeEvidenceQueueRepository(),
     );
   });
 
@@ -23,11 +26,23 @@ void main() {
     await resetDependencies();
   });
 
-  testWidgets('app boots from main entry configuration', (tester) async {
+  testWidgets('app boots and navigates shell tabs without exception', (tester) async {
     await tester.pumpWidget(NoiseGuardianApp(router: createAppRouter()));
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('capture_view')), findsOneWidget);
     expect(find.byKey(const ValueKey('nav_capture')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('nav_history')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('history_view')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('nav_settings')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('settings_view')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('nav_capture')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('capture_view')), findsOneWidget);
   });
 }
