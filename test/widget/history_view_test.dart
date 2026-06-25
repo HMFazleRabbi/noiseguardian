@@ -4,7 +4,6 @@ import 'package:noise_guardian/data/services/local_mock_doe_sync_service.dart';
 import 'package:noise_guardian/domain/models/queue_status.dart';
 import 'package:noise_guardian/domain/models/sync_receipt.dart';
 import 'package:noise_guardian/domain/use_cases/sync_evidence_use_case.dart';
-import 'package:noise_guardian/l10n/app_localizations.dart';
 import 'package:noise_guardian/ui/features/history/view_models/history_view_model.dart';
 import 'package:noise_guardian/ui/features/history/views/history_view.dart';
 import 'package:provider/provider.dart';
@@ -27,8 +26,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
         home: ChangeNotifierProvider.value(
           value: vm,
           child: const HistoryView(),
@@ -69,8 +66,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
         home: ChangeNotifierProvider.value(
           value: vm,
           child: const HistoryView(),

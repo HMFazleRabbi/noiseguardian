@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:noise_guardian/l10n/app_localizations.dart';
 import 'package:noise_guardian/router/app_routes.dart';
 import 'package:noise_guardian/ui/features/onboarding/views/onboarding_view.dart';
 import '../fakes/fake_consent_repository.dart';
@@ -26,8 +25,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp.router(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
         routerConfig: router,
       ),
     );
@@ -46,8 +43,6 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
         home: OnboardingView(consentRepository: consent),
       ),
     );

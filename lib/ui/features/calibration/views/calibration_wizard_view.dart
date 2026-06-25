@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:noise_guardian/l10n/app_localizations.dart';
+import 'package:noise_guardian/ui/core/strings.dart';
 import 'package:noise_guardian/ui/features/calibration/view_models/calibration_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,6 @@ class _CalibrationWizardViewState extends State<CalibrationWizardView> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final viewModel = context.watch<CalibrationViewModel>();
 
     return SafeArea(
@@ -32,7 +31,7 @@ class _CalibrationWizardViewState extends State<CalibrationWizardView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              l10n.calibrationTitle,
+              AppStrings.calibrationTitle,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 12),
@@ -41,12 +40,14 @@ class _CalibrationWizardViewState extends State<CalibrationWizardView> {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    l10n.calibrationCurrentCd(viewModel.savedCd!.toStringAsFixed(2)),
+                    AppStrings.calibrationCurrentCd(
+                      viewModel.savedCd!.toStringAsFixed(2),
+                    ),
                   ),
                 ),
               ),
             const SizedBox(height: 12),
-            Expanded(child: _buildStep(context, l10n, viewModel)),
+            Expanded(child: _buildStep(context, viewModel)),
           ],
         ),
       ),
@@ -55,7 +56,6 @@ class _CalibrationWizardViewState extends State<CalibrationWizardView> {
 
   Widget _buildStep(
     BuildContext context,
-    AppLocalizations l10n,
     CalibrationViewModel viewModel,
   ) {
     switch (viewModel.step) {
@@ -64,7 +64,7 @@ class _CalibrationWizardViewState extends State<CalibrationWizardView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(l10n.calibrationIntro),
+              const Text(AppStrings.calibrationIntro),
               const SizedBox(height: 24),
               if (viewModel.errorMessage != null) ...[
                 Text(
@@ -75,7 +75,7 @@ class _CalibrationWizardViewState extends State<CalibrationWizardView> {
               ],
               FilledButton(
                 onPressed: viewModel.busy ? null : viewModel.startCalibration,
-                child: Text(l10n.calibrationStart),
+                child: const Text(AppStrings.calibrationStart),
               ),
             ],
           ),
@@ -96,18 +96,18 @@ class _CalibrationWizardViewState extends State<CalibrationWizardView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              l10n.calibrationSuccess(viewModel.savedCd!.toStringAsFixed(2)),
+              AppStrings.calibrationSuccess(viewModel.savedCd!.toStringAsFixed(2)),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const Spacer(),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.calibrationDone),
+              child: const Text(AppStrings.calibrationDone),
             ),
             const SizedBox(height: 8),
             OutlinedButton(
               onPressed: viewModel.reset,
-              child: Text(l10n.calibrationRetry),
+              child: const Text(AppStrings.calibrationRetry),
             ),
           ],
         );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noise_guardian/domain/models/guard_state.dart';
 import 'package:noise_guardian/domain/models/noise_class.dart';
-import 'package:noise_guardian/l10n/app_localizations.dart';
+import 'package:noise_guardian/ui/core/strings.dart';
 import 'package:noise_guardian/ui/features/capture/view_models/capture_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +23,6 @@ class _CaptureViewState extends State<CaptureView> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final vm = context.watch<CaptureViewModel>();
 
     return SafeArea(
@@ -34,19 +33,19 @@ class _CaptureViewState extends State<CaptureView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              l10n.captureTitle,
+              AppStrings.captureTitle,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 12),
-            _GuardBanner(state: vm.guardState, l10n: l10n),
+            _GuardBanner(state: vm.guardState),
             const SizedBox(height: 16),
             if (vm.isRecording)
-              Center(
+              const Center(
                 child: Column(
                   children: [
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 8),
-                    Text(l10n.captureRecording),
+                    CircularProgressIndicator(),
+                    SizedBox(height: 8),
+                    Text(AppStrings.captureRecording),
                   ],
                 ),
               ),
@@ -54,14 +53,13 @@ class _CaptureViewState extends State<CaptureView> {
               _LaeqMeter(
                 laeq: vm.lastLaeq!,
                 threshold: vm.zoneThresholdDb,
-                l10n: l10n,
               ),
               const SizedBox(height: 8),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    l10n.captureLaeq(vm.lastLaeq!.toStringAsFixed(1)),
+                    AppStrings.captureLaeq(vm.lastLaeq!.toStringAsFixed(1)),
                   ),
                 ),
               ),
@@ -74,11 +72,13 @@ class _CaptureViewState extends State<CaptureView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        l10n.captureClassLabel(vm.lastResult!.label.displayName),
+                        AppStrings.captureClassLabel(
+                          vm.lastResult!.label.displayName,
+                        ),
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
-                        l10n.captureConfidence(
+                        AppStrings.captureConfidence(
                           (vm.lastResult!.confidence * 100).toStringAsFixed(0),
                         ),
                       ),
@@ -94,14 +94,14 @@ class _CaptureViewState extends State<CaptureView> {
             const Spacer(),
             Semantics(
               button: true,
-              label: l10n.captureRecord,
+              label: AppStrings.captureRecord,
               enabled: vm.canRecord,
               child: ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
                 child: FilledButton(
                   key: const ValueKey('capture_record_button'),
                   onPressed: vm.canRecord ? () => vm.record() : null,
-                  child: Text(l10n.captureRecord),
+                  child: const Text(AppStrings.captureRecord),
                 ),
               ),
             ),
@@ -116,12 +116,10 @@ class _LaeqMeter extends StatelessWidget {
   const _LaeqMeter({
     required this.laeq,
     required this.threshold,
-    required this.l10n,
   });
 
   final double laeq;
   final double threshold;
-  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
@@ -129,8 +127,8 @@ class _LaeqMeter extends StatelessWidget {
     final fraction = (laeq / (threshold + 10)).clamp(0.0, 1.0);
 
     return Semantics(
-      label: l10n.captureLaeqMeterLabel,
-      value: l10n.captureLaeq(laeq.toStringAsFixed(1)),
+      label: AppStrings.captureLaeqMeterLabel,
+      value: AppStrings.captureLaeq(laeq.toStringAsFixed(1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -161,21 +159,20 @@ class _LaeqMeter extends StatelessWidget {
 }
 
 class _GuardBanner extends StatelessWidget {
-  const _GuardBanner({required this.state, required this.l10n});
+  const _GuardBanner({required this.state});
 
   final GuardState state;
-  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
     final (color, message) = switch (state) {
       GuardState.ok => (
           Theme.of(context).colorScheme.primaryContainer,
-          l10n.guardOk,
+          AppStrings.guardOk,
         ),
       GuardState.unsteady => (
           Theme.of(context).colorScheme.errorContainer,
-          l10n.guardObscured,
+          AppStrings.guardUnsteady,
         ),
     };
 

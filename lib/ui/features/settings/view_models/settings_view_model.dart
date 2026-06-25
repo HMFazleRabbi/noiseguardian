@@ -1,8 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:noise_guardian/core/locale/app_locale_notifier.dart';
 import 'package:noise_guardian/data/models/queued_evidence.dart';
 import 'package:noise_guardian/data/repositories/app_settings_repository.dart';
 import 'package:noise_guardian/data/repositories/consent_repository.dart';
@@ -15,28 +13,23 @@ class SettingsViewModel extends ChangeNotifier {
     required AppSettingsRepository settings,
     required ConsentRepository consent,
     required EvidenceQueueRepository queue,
-    AppLocaleNotifier? localeNotifier,
     PdfExportService? pdfExport,
   })  : _settings = settings,
         _consent = consent,
         _queue = queue,
-        _localeNotifier = localeNotifier,
         _pdfExport = pdfExport ?? const PdfExportService();
 
   final AppSettingsRepository _settings;
   final ConsentRepository _consent;
   final EvidenceQueueRepository _queue;
-  final AppLocaleNotifier? _localeNotifier;
   final PdfExportService _pdfExport;
 
   bool _useMockDoe = true;
-  String? _localeCode;
   bool _loading = true;
   String? _errorMessage;
   QueuedEvidence? _lastSynced;
 
   bool get useMockDoe => _useMockDoe;
-  String? get localeCode => _localeCode;
   bool get loading => _loading;
   String? get errorMessage => _errorMessage;
   QueuedEvidence? get lastSynced => _lastSynced;
@@ -47,7 +40,6 @@ class SettingsViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       _useMockDoe = _settings.useMockDoe;
-      _localeCode = _settings.localeCode;
       await _loadLastSynced();
     } catch (error) {
       _errorMessage = error.toString();
@@ -66,13 +58,6 @@ class SettingsViewModel extends ChangeNotifier {
     }
     synced.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     _lastSynced = synced.first;
-  }
-
-  Future<void> setLocaleCode(String code) async {
-    _localeCode = code;
-    await _settings.setLocaleCode(code);
-    _localeNotifier?.setLocale(Locale(code));
-    notifyListeners();
   }
 
   Future<Uint8List?> exportLastSyncedPdf() async {

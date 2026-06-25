@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acoustic evidence of noise pollution in Dhaka. **Original Stages 1–6 are complete.** The project is now executing the **MVP descope** roadmap ([NG-Update-Design-Doc.md](../NG-Update-Design-Doc.md) §7). **MVP Stage 1 (heatmap removal) is complete** on branch `mvp-descope`.
+NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acoustic evidence of noise pollution in Dhaka. **Original Stages 1–6 are complete.** The project is now executing the **MVP descope** roadmap ([NG-Update-Design-Doc.md](../NG-Update-Design-Doc.md) §7). **MVP Stages 1–3 are complete** on branch `mvp-descope`.
 
 ---
 
@@ -19,10 +19,26 @@ NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acousti
 |-----------|-------|--------|
 | 1 | Safety harness + remove Heatmap | **Complete** |
 | 2 | Remove Voice/TTS + Low-data; simplify Sensor Guard | **Complete** |
-| 3 | Remove l10n → English strings | Not started |
+| 3 | Remove l10n → English strings | **Complete** |
 | 4 | Remove Sync/Queue → ReportRepository | Not started |
 | 5 | Slim crypto + SHA-256 packet + local export | Not started |
 | 6 | YAMNet edge AI + release hardening | Not started |
+
+### MVP Stage 3 — Remove l10n → English strings
+
+| Deliverable | Status |
+|-------------|--------|
+| Populate `lib/ui/core/strings.dart` from `app_en.arb` (used keys) | Done |
+| Replace all `AppLocalizations` call-sites with `AppStrings` | Done |
+| Delete l10n config, ARB files, generated localizations | Done |
+| Remove `AppLocaleNotifier`, locale selector, locale persistence | Done |
+| Drop `flutter_localizations` from pubspec | Done |
+
+**Quality gates (MVP Stage 3):** `flutter analyze` 0 errors · **106 / 106 tests** · debug APK (arm64) builds
+
+See [log/mvp-stage-3-dev-log.md](mvp-stage-3-dev-log.md).
+
+---
 
 ### MVP Stage 2 — Remove Voice/TTS & Low-data; Simplify Sensor Guard
 
@@ -129,17 +145,17 @@ test/widget/settings_view_test.dart            — 1 test
 
 ---
 
-## Next Up — MVP Stage 3 (Remove l10n → English strings)
+## Next Up — MVP Stage 4 (Remove Sync/Queue → ReportRepository)
 
 **Deliverables:**
 
-- Populate `lib/ui/core/strings.dart` from `app_en.arb`
-- Replace all `AppLocalizations` call-sites
-- Delete l10n config, ARB files, `AppLocaleNotifier`, locale selector
+- Replace encrypted queue + sync with local `ReportRepository`
+- Rename history → reports
+- Remove HTTP sync, mock DoE, connectivity gate
 
 ---
 
-## Next Up (Original) — MVP Stage 2 — superseded
+## Next Up — MVP Stage 3 — superseded
 
 **Deliverables:**
 
@@ -156,8 +172,7 @@ test/widget/settings_view_test.dart            — 1 test
 |---------|---------|
 | `sqflite` | Encrypted offline evidence queue |
 | `http` | DoE REST sync |
-| `connectivity_plus` | Low-data WiFi gate |
-| `flutter_tts` | Voice-guided capture |
+| `connectivity_plus` | Network status (Stage 4 removal candidate) |
 | `pdf`, `printing` | Evidence PDF export |
 | `crypto` | SHA-256 hashing |
 | `pointycastle` | ECDSA secp256k1 signing |

@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:noise_guardian/core/locale/app_locale_notifier.dart';
 import 'package:noise_guardian/data/repositories/app_settings_repository.dart';
 import 'package:noise_guardian/data/repositories/consent_repository.dart';
 import 'package:noise_guardian/data/repositories/evidence_queue_repository.dart';
@@ -42,7 +41,6 @@ void main() {
       expect(getIt<DebugLogService>(), isA<NoopDebugLogService>());
       expect(getIt<ConnectivityService>(), isA<AlwaysWifiConnectivityService>());
       expect(getIt<PdfExportService>(), isA<PdfExportService>());
-      expect(getIt<AppLocaleNotifier>(), isA<AppLocaleNotifier>());
       expect(getIt<ZoneThresholdService>(), isA<ZoneThresholdService>());
       expect(getIt<ViolationEvaluator>(), isA<ViolationEvaluator>());
       expect(getIt<TimestampService>(), isA<LocalTimestampService>());

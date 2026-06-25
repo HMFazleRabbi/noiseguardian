@@ -7,7 +7,7 @@ import 'package:noise_guardian/data/services/pdf_export_service.dart';
 import 'package:noise_guardian/domain/models/queue_status.dart';
 import 'package:noise_guardian/domain/models/sync_summary.dart';
 import 'package:noise_guardian/domain/use_cases/sync_evidence_use_case.dart';
-import 'package:noise_guardian/l10n/app_localizations.dart';
+import 'package:noise_guardian/ui/core/strings.dart';
 
 class HistoryViewModel extends ChangeNotifier {
   HistoryViewModel({
@@ -73,16 +73,16 @@ class HistoryViewModel extends ChangeNotifier {
     return _pdfExport.exportEvidencePdf(item);
   }
 
-  static String statusLabel(QueueStatus status, AppLocalizations l10n) {
+  static String statusLabel(QueueStatus status) {
     switch (status) {
       case QueueStatus.pending:
-        return l10n.statusPending;
+        return AppStrings.statusPending;
       case QueueStatus.syncing:
-        return l10n.statusSyncing;
+        return AppStrings.statusSyncing;
       case QueueStatus.synced:
-        return l10n.statusSynced;
+        return AppStrings.statusSynced;
       case QueueStatus.failed:
-        return l10n.statusFailed;
+        return AppStrings.statusFailed;
     }
   }
 }

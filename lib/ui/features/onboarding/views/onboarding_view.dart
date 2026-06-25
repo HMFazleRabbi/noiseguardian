@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:noise_guardian/data/repositories/consent_repository.dart';
 import 'package:noise_guardian/di/service_locator.dart';
-import 'package:noise_guardian/l10n/app_localizations.dart';
 import 'package:noise_guardian/router/app_routes.dart';
+import 'package:noise_guardian/ui/core/strings.dart';
 
 /// First-launch PDPO 2025 consent screen (design doc §12.1).
 class OnboardingView extends StatelessWidget {
@@ -28,7 +28,6 @@ class OnboardingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -43,11 +42,11 @@ class OnboardingView extends StatelessWidget {
                 Icons.hearing,
                 size: 64,
                 color: theme.colorScheme.primary,
-                semanticLabel: l10n.onboardingIconLabel,
+                semanticLabel: AppStrings.onboardingIconLabel,
               ),
               const SizedBox(height: 16),
               Text(
-                l10n.onboardingTitle,
+                AppStrings.onboardingTitle,
                 style: theme.textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
@@ -57,18 +56,18 @@ class OnboardingView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.onboardingConsentIntro),
+                      const Text(AppStrings.onboardingConsentIntro),
                       const SizedBox(height: 16),
                       Text(
-                        l10n.onboardingPurgePolicy,
+                        AppStrings.onboardingPurgePolicy,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Text(l10n.onboardingPdpoRights),
+                      const Text(AppStrings.onboardingPdpoRights),
                       const SizedBox(height: 12),
-                      Text(l10n.onboardingDataUse),
+                      const Text(AppStrings.onboardingDataUse),
                     ],
                   ),
                 ),
@@ -76,21 +75,21 @@ class OnboardingView extends StatelessWidget {
               const SizedBox(height: 16),
               Semantics(
                 button: true,
-                label: l10n.onboardingAgree,
+                label: AppStrings.onboardingAgree,
                 child: FilledButton(
                   key: const ValueKey('onboarding_agree_button'),
                   onPressed: () => _agree(context),
-                  child: Text(l10n.onboardingAgree),
+                  child: const Text(AppStrings.onboardingAgree),
                 ),
               ),
               const SizedBox(height: 8),
               Semantics(
                 button: true,
-                label: l10n.onboardingDecline,
+                label: AppStrings.onboardingDecline,
                 child: OutlinedButton(
                   key: const ValueKey('onboarding_decline_button'),
                   onPressed: () {},
-                  child: Text(l10n.onboardingDecline),
+                  child: const Text(AppStrings.onboardingDecline),
                 ),
               ),
             ],

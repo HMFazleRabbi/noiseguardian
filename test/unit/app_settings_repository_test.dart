@@ -16,11 +16,6 @@ void main() {
       expect(repository.useMockDoe, isTrue);
     });
 
-    test('persists locale', () async {
-      await repository.setLocaleCode('bn');
-      expect(repository.localeCode, 'bn');
-    });
-
     test('setUseMockDoe persists', () async {
       await repository.setUseMockDoe(false);
       expect(repository.useMockDoe, isFalse);

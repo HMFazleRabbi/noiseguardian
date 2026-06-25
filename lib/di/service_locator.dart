@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
-import 'package:noise_guardian/core/locale/app_locale_notifier.dart';
 import 'package:noise_guardian/data/repositories/app_settings_repository.dart';
 import 'package:noise_guardian/data/repositories/calibration_repository.dart';
 import 'package:noise_guardian/data/repositories/consent_repository.dart';
@@ -50,7 +48,6 @@ void configureDependencies({
   LaeqService? laeqService,
   SyncService? syncService,
   ConnectivityService? connectivityService,
-  AppLocaleNotifier? appLocaleNotifier,
   PdfExportService? pdfExportService,
   DebugLogService? debugLogService,
   SensorGuardService? sensorGuardService,
@@ -85,10 +82,6 @@ void configureDependencies({
   if (appSettingsRepository != null) {
     getIt.registerLazySingleton<AppSettingsRepository>(() => appSettingsRepository);
   }
-
-  getIt.registerLazySingleton<AppLocaleNotifier>(
-    () => appLocaleNotifier ?? AppLocaleNotifier(),
-  );
 
   getIt.registerLazySingleton<CalibrationService>(
     () {
@@ -239,7 +232,6 @@ void configureDependencies({
         settings: getIt<AppSettingsRepository>(),
         consent: getIt<ConsentRepository>(),
         queue: getIt<EvidenceQueueRepository>(),
-        localeNotifier: getIt<AppLocaleNotifier>(),
         pdfExport: getIt<PdfExportService>(),
       ),
     );
@@ -270,18 +262,11 @@ Future<void> configureDependenciesAsync({
   http.Client? httpClient,
   String? doePortalBaseUrl,
   bool? useMockDoe,
-  AppLocaleNotifier? appLocaleNotifier,
 }) async {
   final prefs = await SharedPreferences.getInstance();
   final repository = CalibrationRepository(prefs);
   final consentRepository = ConsentRepository(prefs);
   final appSettingsRepository = AppSettingsRepository(prefs);
-
-  final localeNotifier = appLocaleNotifier ?? AppLocaleNotifier();
-  final savedLocale = appSettingsRepository.localeCode;
-  if (savedLocale != null && savedLocale.isNotEmpty) {
-    localeNotifier.setLocale(Locale(savedLocale));
-  }
 
   var deviceInstallId = prefs.getString(_deviceInstallIdKey);
   if (deviceInstallId == null || deviceInstallId.isEmpty) {
@@ -326,7 +311,6 @@ Future<void> configureDependenciesAsync({
     doePortalBaseUrl: doePortalBaseUrl,
     deviceInstallId: deviceInstallId,
     useMockDoe: useMockDoe ?? appSettingsRepository.useMockDoe,
-    appLocaleNotifier: localeNotifier,
   );
 }
 
@@ -341,7 +325,6 @@ Future<void> resetDependencies() async {
 }
 
 void _unregisterStageServices() {
-  _unregisterIfNeeded<AppLocaleNotifier>();
   _unregisterIfNeeded<CalibrationService>();
   _unregisterIfNeeded<CalibrationRepository>();
   _unregisterIfNeeded<ConsentRepository>();

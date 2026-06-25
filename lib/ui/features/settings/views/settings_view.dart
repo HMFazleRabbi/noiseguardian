@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:noise_guardian/core/logging/app_log.dart';
 import 'package:noise_guardian/data/services/debug_log_service.dart';
 import 'package:noise_guardian/di/service_locator.dart';
-import 'package:noise_guardian/l10n/app_localizations.dart';
+import 'package:noise_guardian/ui/core/strings.dart';
 import 'package:noise_guardian/ui/features/calibration/view_models/calibration_view_model.dart';
 import 'package:noise_guardian/ui/features/calibration/views/calibration_wizard_view.dart';
 import 'package:noise_guardian/ui/features/settings/view_models/settings_view_model.dart';
@@ -65,7 +65,7 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
     });
   }
 
-  Future<void> _copyLogPath(AppLocalizations l10n) async {
+  Future<void> _copyLogPath() async {
     final path = _logger.logFilePath;
     if (path == null) {
       return;
@@ -75,7 +75,7 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.settingsLogPathCopied)),
+      const SnackBar(content: Text(AppStrings.settingsLogPathCopied)),
     );
     await appLogInfo('settings', 'Log path copied to clipboard', data: {'path': path});
   }
@@ -92,7 +92,6 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
   Future<void> _exportLastPdf(
     BuildContext context,
     SettingsViewModel vm,
-    AppLocalizations l10n,
   ) async {
     final bytes = await vm.exportLastSyncedPdf();
     if (!context.mounted) {
@@ -100,7 +99,7 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
     }
     if (bytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.settingsNoSyncedEvidence)),
+        const SnackBar(content: Text(AppStrings.settingsNoSyncedEvidence)),
       );
       return;
     }
@@ -109,7 +108,6 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final vm = context.watch<SettingsViewModel>();
     final logPath = _logger.logFilePath ?? 'Log file not initialized';
 
@@ -127,7 +125,7 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      l10n.settingsTitle,
+                      AppStrings.settingsTitle,
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     if (vm.loading)
@@ -136,37 +134,20 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
                         child: LinearProgressIndicator(),
                       )
                     else ...[
-                      const SizedBox(height: 12),
-                      Text(l10n.settingsLanguage, style: Theme.of(context).textTheme.titleSmall),
-                      SegmentedButton<String>(
-                        key: const ValueKey('settings_language_selector'),
-                        segments: [
-                          ButtonSegment(value: 'en', label: Text(l10n.settingsLanguageEn)),
-                          ButtonSegment(
-                            value: 'bn',
-                            label: Text(l10n.settingsLanguageBn),
-                          ),
-                        ],
-                        selected: {vm.localeCode ?? 'en'},
-                        onSelectionChanged: (selection) {
-                          final code = selection.first;
-                          unawaited(vm.setLocaleCode(code));
-                        },
-                      ),
                       if (vm.useMockDoe) ...[
                         const SizedBox(height: 12),
-                        ListTile(
-                          key: const ValueKey('settings_mock_doe_indicator'),
-                          leading: const Icon(Icons.cloud_off),
-                          title: Text(l10n.settingsMockDoeStatus),
+                        const ListTile(
+                          key: ValueKey('settings_mock_doe_indicator'),
+                          leading: Icon(Icons.cloud_off),
+                          title: Text(AppStrings.settingsMockDoeStatus),
                           dense: true,
                         ),
                       ],
                       const SizedBox(height: 8),
                       FilledButton.tonal(
                         key: const ValueKey('settings_export_pdf_button'),
-                        onPressed: () => unawaited(_exportLastPdf(context, vm, l10n)),
-                        child: Text(l10n.settingsExportLastPdf),
+                        onPressed: () => unawaited(_exportLastPdf(context, vm)),
+                        child: const Text(AppStrings.settingsExportLastPdf),
                       ),
                     ],
                     const SizedBox(height: 12),
@@ -181,10 +162,10 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
                           ),
                         );
                       },
-                      child: Text(l10n.calibrationOpen),
+                      child: const Text(AppStrings.calibrationOpen),
                     ),
                     const SizedBox(height: 16),
-                    Text(l10n.settingsDebugLog, style: Theme.of(context).textTheme.titleMedium),
+                    Text(AppStrings.settingsDebugLog, style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 8),
                     SelectableText(
                       logPath,
@@ -196,16 +177,16 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
                       runSpacing: 8,
                       children: [
                         FilledButton.tonal(
-                          onPressed: () => unawaited(_copyLogPath(l10n)),
-                          child: Text(l10n.settingsCopyPath),
+                          onPressed: () => unawaited(_copyLogPath()),
+                          child: const Text(AppStrings.settingsCopyPath),
                         ),
                         OutlinedButton(
                           onPressed: _clearLog,
-                          child: Text(l10n.settingsClearLog),
+                          child: const Text(AppStrings.settingsClearLog),
                         ),
                         OutlinedButton(
                           onPressed: () => unawaited(_loadInitialTail()),
-                          child: Text(l10n.settingsRefreshLog),
+                          child: const Text(AppStrings.settingsRefreshLog),
                         ),
                       ],
                     ),
@@ -223,7 +204,7 @@ class _SettingsViewState extends State<SettingsView> with LoggedScreenState {
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
                 child: _lines.isEmpty
-                    ? Center(child: Text(l10n.settingsNoLogLines))
+                    ? const Center(child: Text(AppStrings.settingsNoLogLines))
                     : ListView.builder(
                         padding: const EdgeInsets.all(8),
                         itemCount: _lines.length,
