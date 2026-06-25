@@ -34,4 +34,27 @@ void main() {
     final button = tester.widget<FilledButton>(recordButton);
     expect(button.onPressed, isNull);
   });
+
+  testWidgets('record button meets 48dp minimum touch target', (tester) async {
+    final vm = CaptureViewModel(
+      sensorGuard: FakeSensorGuardService(),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: ChangeNotifierProvider.value(
+          value: vm,
+          child: const CaptureView(),
+        ),
+      ),
+    );
+    await vm.initialize();
+    await tester.pumpAndSettle();
+
+    final size = tester.getSize(find.byKey(const ValueKey('capture_record_button')));
+    expect(size.height, greaterThanOrEqualTo(48));
+    expect(size.width, greaterThanOrEqualTo(48));
+  });
 }

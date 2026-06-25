@@ -17,7 +17,10 @@ class _CaptureViewState extends State<CaptureView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CaptureViewModel>().initialize();
+      final vm = context.read<CaptureViewModel>();
+      final l10n = AppLocalizations.of(context)!;
+      vm.bindVoicePrompts(l10n);
+      vm.initialize();
     });
   }
 
@@ -41,16 +44,22 @@ class _CaptureViewState extends State<CaptureView> {
             _GuardBanner(state: vm.guardState, l10n: l10n),
             const SizedBox(height: 16),
             if (vm.isRecording)
-              const Center(
+              Center(
                 child: Column(
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 8),
-                    Text('Recording…'),
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 8),
+                    Text(l10n.captureRecording),
                   ],
                 ),
               ),
-            if (vm.lastLaeq != null)
+            if (vm.lastLaeq != null) ...[
+              _LaeqMeter(
+                laeq: vm.lastLaeq!,
+                threshold: vm.zoneThresholdDb,
+                l10n: l10n,
+              ),
+              const SizedBox(height: 8),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(12),
@@ -59,6 +68,7 @@ class _CaptureViewState extends State<CaptureView> {
                   ),
                 ),
               ),
+            ],
             if (vm.lastResult != null)
               Card(
                 child: Padding(
@@ -85,15 +95,71 @@ class _CaptureViewState extends State<CaptureView> {
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             const Spacer(),
-            FilledButton(
-              key: const ValueKey('capture_record_button'),
-              onPressed: vm.canRecord ? () => vm.record() : null,
-              child: Text(l10n.captureRecord),
+            Semantics(
+              button: true,
+              label: l10n.captureRecord,
+              enabled: vm.canRecord,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+                child: FilledButton(
+                  key: const ValueKey('capture_record_button'),
+                  onPressed: vm.canRecord ? () => vm.record() : null,
+                  child: Text(l10n.captureRecord),
+                ),
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+class _LaeqMeter extends StatelessWidget {
+  const _LaeqMeter({
+    required this.laeq,
+    required this.threshold,
+    required this.l10n,
+  });
+
+  final double laeq;
+  final double threshold;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _meterColor(laeq, threshold);
+    final fraction = (laeq / (threshold + 10)).clamp(0.0, 1.0);
+
+    return Semantics(
+      label: l10n.captureLaeqMeterLabel,
+      value: l10n.captureLaeq(laeq.toStringAsFixed(1)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              key: const ValueKey('capture_laeq_meter'),
+              value: fraction,
+              minHeight: 12,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _meterColor(double laeq, double threshold) {
+    if (laeq <= threshold) {
+      return Colors.green.shade600;
+    }
+    if (laeq <= threshold + 5) {
+      return Colors.amber.shade700;
+    }
+    return Colors.red.shade700;
   }
 }
 

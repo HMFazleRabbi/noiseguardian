@@ -1,19 +1,26 @@
+import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart';
 import 'package:noise_guardian/data/models/queued_evidence.dart';
 import 'package:noise_guardian/data/repositories/evidence_queue_repository.dart';
+import 'package:noise_guardian/data/services/pdf_export_service.dart';
 import 'package:noise_guardian/domain/models/queue_status.dart';
 import 'package:noise_guardian/domain/models/sync_summary.dart';
 import 'package:noise_guardian/domain/use_cases/sync_evidence_use_case.dart';
+import 'package:noise_guardian/l10n/app_localizations.dart';
 
 class HistoryViewModel extends ChangeNotifier {
   HistoryViewModel({
     required EvidenceQueueRepository queue,
     required SyncEvidenceUseCase syncEvidence,
+    PdfExportService? pdfExport,
   })  : _queue = queue,
-        _syncEvidence = syncEvidence;
+        _syncEvidence = syncEvidence,
+        _pdfExport = pdfExport ?? const PdfExportService();
 
   final EvidenceQueueRepository _queue;
   final SyncEvidenceUseCase _syncEvidence;
+  final PdfExportService _pdfExport;
 
   List<QueuedEvidence> _items = [];
   bool _loading = false;
@@ -59,16 +66,23 @@ class HistoryViewModel extends ChangeNotifier {
     }
   }
 
-  static String statusLabel(QueueStatus status) {
+  Future<Uint8List?> exportPdf(QueuedEvidence item) async {
+    if (item.status != QueueStatus.synced) {
+      return null;
+    }
+    return _pdfExport.exportEvidencePdf(item);
+  }
+
+  static String statusLabel(QueueStatus status, AppLocalizations l10n) {
     switch (status) {
       case QueueStatus.pending:
-        return 'Pending';
+        return l10n.statusPending;
       case QueueStatus.syncing:
-        return 'Syncing';
+        return l10n.statusSyncing;
       case QueueStatus.synced:
-        return 'Synced';
+        return l10n.statusSynced;
       case QueueStatus.failed:
-        return 'Failed';
+        return l10n.statusFailed;
     }
   }
 }

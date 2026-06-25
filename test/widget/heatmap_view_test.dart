@@ -36,6 +36,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('heatmap_view')), findsOneWidget);
+    expect(find.byKey(const ValueKey('heatmap_map_view')), findsOneWidget);
     expect(find.byKey(const ValueKey('heatmap_cell_23.81,90.41')), findsOneWidget);
     expect(find.text('n=2'), findsOneWidget);
     expect(find.textContaining('23.81'), findsOneWidget);

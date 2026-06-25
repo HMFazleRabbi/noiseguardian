@@ -224,6 +224,18 @@ abstract class AppLocalizations {
   /// **'Confidence: {value}%'**
   String captureConfidence(String value);
 
+  /// Shown while capture is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Recording…'**
+  String get captureRecording;
+
+  /// Semantic label for LAeq color meter
+  ///
+  /// In en, this message translates to:
+  /// **'LAeq level meter'**
+  String get captureLaeqMeterLabel;
+
   /// Guard state OK message
   ///
   /// In en, this message translates to:
@@ -247,6 +259,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Excessive handling detected — hold steady.'**
   String get guardObscured;
+
+  /// TTS when guard state is OK
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to capture. Hold phone upright.'**
+  String get voicePromptReady;
+
+  /// TTS when device is muffled
+  ///
+  /// In en, this message translates to:
+  /// **'Uncover the microphone to continue.'**
+  String get voicePromptMuffled;
+
+  /// TTS when phone is pocketed
+  ///
+  /// In en, this message translates to:
+  /// **'Remove phone from pocket.'**
+  String get voicePromptPocketed;
+
+  /// TTS when handling is excessive
+  ///
+  /// In en, this message translates to:
+  /// **'Hold the phone steady.'**
+  String get voicePromptObscured;
+
+  /// TTS after successful capture
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence captured successfully.'**
+  String get voicePromptCaptureComplete;
+
+  /// Onboarding screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to NoiseGuardian'**
+  String get onboardingTitle;
+
+  /// Accessibility label for onboarding icon
+  ///
+  /// In en, this message translates to:
+  /// **'NoiseGuardian logo'**
+  String get onboardingIconLabel;
+
+  /// Onboarding consent introduction
+  ///
+  /// In en, this message translates to:
+  /// **'Before you begin, please review how NoiseGuardian handles your data under Bangladesh\'\'s Personal Data Protection Ordinance (PDPO) 2025.'**
+  String get onboardingConsentIntro;
+
+  /// Onboarding audio purge policy
+  ///
+  /// In en, this message translates to:
+  /// **'Audio purge: Raw audio is deleted immediately after feature extraction. Only signed evidence packets (LAeq, class, obfuscated location) are retained locally.'**
+  String get onboardingPurgePolicy;
+
+  /// Onboarding PDPO rights
+  ///
+  /// In en, this message translates to:
+  /// **'Your rights: You may request access, correction, or deletion of your submitted evidence via the DoE portal. You may withdraw consent in Settings.'**
+  String get onboardingPdpoRights;
+
+  /// Onboarding data use statement
+  ///
+  /// In en, this message translates to:
+  /// **'Data use: Evidence is synced to the Department of Environment for enforcement. GPS coordinates are obfuscated to ~100 m before leaving your device.'**
+  String get onboardingDataUse;
+
+  /// Consent agree button
+  ///
+  /// In en, this message translates to:
+  /// **'I agree — start capturing'**
+  String get onboardingAgree;
+
+  /// Consent decline button
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get onboardingDecline;
+
+  /// History sync button label
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get historySync;
+
+  /// History empty state
+  ///
+  /// In en, this message translates to:
+  /// **'No evidence queued yet.'**
+  String get historyEmpty;
+
+  /// Export evidence as PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get historyExportPdf;
+
+  /// History list LAeq subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'LAeq {value} dB(A)'**
+  String historyLaeqSubtitle(String value);
+
+  /// Queue status pending
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get statusPending;
+
+  /// Queue status syncing
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing'**
+  String get statusSyncing;
+
+  /// Queue status synced
+  ///
+  /// In en, this message translates to:
+  /// **'Synced'**
+  String get statusSynced;
+
+  /// Queue status failed
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get statusFailed;
+
+  /// Heatmap empty state
+  ///
+  /// In en, this message translates to:
+  /// **'No synced evidence for heatmap yet.'**
+  String get heatmapEmpty;
+
+  /// Heatmap map colour legend
+  ///
+  /// In en, this message translates to:
+  /// **'Green: below limit · Amber: elevated · Red: high'**
+  String get heatmapMapLegend;
+
+  /// Cell sample count
+  ///
+  /// In en, this message translates to:
+  /// **'n={count}'**
+  String heatmapCellCount(int count);
+
+  /// Cell average LAeq
+  ///
+  /// In en, this message translates to:
+  /// **'avg {value} dB'**
+  String heatmapCellAvg(String value);
+
+  /// Cell max LAeq
+  ///
+  /// In en, this message translates to:
+  /// **'max {value} dB'**
+  String heatmapCellMax(String value);
+
+  /// Cell violation count
+  ///
+  /// In en, this message translates to:
+  /// **'violations {count}'**
+  String heatmapCellViolations(int count);
+
+  /// Low-data toggle label
+  ///
+  /// In en, this message translates to:
+  /// **'Low-data mode (WiFi-only sync)'**
+  String get settingsLowDataMode;
+
+  /// Low-data toggle hint
+  ///
+  /// In en, this message translates to:
+  /// **'Blocks sync on mobile data to save bandwidth.'**
+  String get settingsLowDataHint;
+
+  /// Language selector label
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguage;
+
+  /// English language option
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get settingsLanguageEn;
+
+  /// Bengali language option
+  ///
+  /// In en, this message translates to:
+  /// **'বাংলা'**
+  String get settingsLanguageBn;
+
+  /// Read-only mock DoE indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Using local Mock DoE (offline sync)'**
+  String get settingsMockDoeStatus;
+
+  /// Export last synced evidence PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Export last synced PDF'**
+  String get settingsExportLastPdf;
+
+  /// Snackbar when no synced evidence
+  ///
+  /// In en, this message translates to:
+  /// **'No synced evidence to export.'**
+  String get settingsNoSyncedEvidence;
+
+  /// Debug log section title
+  ///
+  /// In en, this message translates to:
+  /// **'Debug log (live)'**
+  String get settingsDebugLog;
+
+  /// Copy log path button
+  ///
+  /// In en, this message translates to:
+  /// **'Copy path'**
+  String get settingsCopyPath;
+
+  /// Clear debug log button
+  ///
+  /// In en, this message translates to:
+  /// **'Clear log'**
+  String get settingsClearLog;
+
+  /// Refresh debug log button
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get settingsRefreshLog;
+
+  /// Snackbar after copying log path
+  ///
+  /// In en, this message translates to:
+  /// **'Log file path copied'**
+  String get settingsLogPathCopied;
+
+  /// Empty debug log panel
+  ///
+  /// In en, this message translates to:
+  /// **'No log lines yet'**
+  String get settingsNoLogLines;
 }
 
 class _AppLocalizationsDelegate

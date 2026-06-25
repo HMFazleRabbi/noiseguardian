@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:noise_guardian/data/models/queued_evidence.dart';
 import 'package:noise_guardian/domain/models/queue_status.dart';
 import 'package:noise_guardian/l10n/app_localizations.dart';
 import 'package:noise_guardian/ui/core/widgets/logged_stateful_widget.dart';
 import 'package:noise_guardian/ui/features/history/view_models/history_view_model.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 class HistoryView extends StatefulWidget {
@@ -40,15 +44,19 @@ class _HistoryViewState extends State<HistoryView> with LoggedScreenState {
                     height: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Sync'),
+                : Text(l10n.historySync),
           ),
         ],
       ),
-      body: _buildBody(vm),
+      body: _buildBody(context, vm, l10n),
     );
   }
 
-  Widget _buildBody(HistoryViewModel vm) {
+  Widget _buildBody(
+    BuildContext context,
+    HistoryViewModel vm,
+    AppLocalizations l10n,
+  ) {
     if (vm.loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -56,7 +64,7 @@ class _HistoryViewState extends State<HistoryView> with LoggedScreenState {
       return Center(child: Text(vm.errorMessage!));
     }
     if (vm.items.isEmpty) {
-      return const Center(child: Text('No evidence queued yet.'));
+      return Center(child: Text(l10n.historyEmpty));
     }
 
     return ListView.separated(
@@ -67,40 +75,64 @@ class _HistoryViewState extends State<HistoryView> with LoggedScreenState {
         return ListTile(
           key: ValueKey('history_item_${item.id}'),
           title: Text(item.packet.metrics.noiseClass),
-          subtitle: Text(
-            'LAeq ${item.packet.metrics.laeqDb.toStringAsFixed(1)} dB(A)',
-          ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _StatusChip(status: item.status),
+              Text(
+                l10n.historyLaeqSubtitle(
+                  item.packet.metrics.laeqDb.toStringAsFixed(1),
+                ),
+              ),
               if (item.receiptId != null)
                 Text(
                   item.receiptId!,
                   key: ValueKey('receipt_${item.id}'),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
+              if (item.status == QueueStatus.synced)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    key: ValueKey('history_export_pdf_${item.id}'),
+                    onPressed: () => unawaited(_exportPdf(context, vm, item)),
+                    child: Text(l10n.historyExportPdf),
+                  ),
+                ),
             ],
           ),
+          trailing: _StatusChip(status: item.status, l10n: l10n),
+          isThreeLine: item.receiptId != null || item.status == QueueStatus.synced,
         );
       },
     );
   }
+
+  Future<void> _exportPdf(
+    BuildContext context,
+    HistoryViewModel vm,
+    QueuedEvidence item,
+  ) async {
+    final bytes = await vm.exportPdf(item);
+    if (!context.mounted || bytes == null) {
+      return;
+    }
+    await Printing.layoutPdf(onLayout: (_) async => bytes);
+  }
 }
 
 class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.status});
+  const _StatusChip({required this.status, required this.l10n});
 
   final QueueStatus status;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
     final (color, label) = switch (status) {
-      QueueStatus.pending => (Colors.orange, HistoryViewModel.statusLabel(status)),
-      QueueStatus.syncing => (Colors.blue, HistoryViewModel.statusLabel(status)),
-      QueueStatus.synced => (Colors.green, HistoryViewModel.statusLabel(status)),
-      QueueStatus.failed => (Colors.red, HistoryViewModel.statusLabel(status)),
+      QueueStatus.pending => (Colors.orange, HistoryViewModel.statusLabel(status, l10n)),
+      QueueStatus.syncing => (Colors.blue, HistoryViewModel.statusLabel(status, l10n)),
+      QueueStatus.synced => (Colors.green, HistoryViewModel.statusLabel(status, l10n)),
+      QueueStatus.failed => (Colors.red, HistoryViewModel.statusLabel(status, l10n)),
     };
 
     return Chip(

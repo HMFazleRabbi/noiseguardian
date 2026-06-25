@@ -109,6 +109,14 @@
       }
     }
   },
+  "captureRecording": "Recording…",
+  "@captureRecording": {
+    "description": "Shown while capture is in progress"
+  },
+  "captureLaeqMeterLabel": "LAeq level meter",
+  "@captureLaeqMeterLabel": {
+    "description": "Semantic label for LAeq color meter"
+  },
   "guardOk": "Ready to capture — hold phone upright at ~1.5 m.",
   "@guardOk": {
     "description": "Guard state OK message"
@@ -124,5 +132,194 @@
   "guardObscured": "Excessive handling detected — hold steady.",
   "@guardObscured": {
     "description": "Guard state obscured message"
+  },
+  "voicePromptReady": "Ready to capture. Hold phone upright.",
+  "@voicePromptReady": {
+    "description": "TTS when guard state is OK"
+  },
+  "voicePromptMuffled": "Uncover the microphone to continue.",
+  "@voicePromptMuffled": {
+    "description": "TTS when device is muffled"
+  },
+  "voicePromptPocketed": "Remove phone from pocket.",
+  "@voicePromptPocketed": {
+    "description": "TTS when phone is pocketed"
+  },
+  "voicePromptObscured": "Hold the phone steady.",
+  "@voicePromptObscured": {
+    "description": "TTS when handling is excessive"
+  },
+  "voicePromptCaptureComplete": "Evidence captured successfully.",
+  "@voicePromptCaptureComplete": {
+    "description": "TTS after successful capture"
+  },
+  "onboardingTitle": "Welcome to NoiseGuardian",
+  "@onboardingTitle": {
+    "description": "Onboarding screen title"
+  },
+  "onboardingIconLabel": "NoiseGuardian logo",
+  "@onboardingIconLabel": {
+    "description": "Accessibility label for onboarding icon"
+  },
+  "onboardingConsentIntro": "Before you begin, please review how NoiseGuardian handles your data under Bangladesh''s Personal Data Protection Ordinance (PDPO) 2025.",
+  "@onboardingConsentIntro": {
+    "description": "Onboarding consent introduction"
+  },
+  "onboardingPurgePolicy": "Audio purge: Raw audio is deleted immediately after feature extraction. Only signed evidence packets (LAeq, class, obfuscated location) are retained locally.",
+  "@onboardingPurgePolicy": {
+    "description": "Onboarding audio purge policy"
+  },
+  "onboardingPdpoRights": "Your rights: You may request access, correction, or deletion of your submitted evidence via the DoE portal. You may withdraw consent in Settings.",
+  "@onboardingPdpoRights": {
+    "description": "Onboarding PDPO rights"
+  },
+  "onboardingDataUse": "Data use: Evidence is synced to the Department of Environment for enforcement. GPS coordinates are obfuscated to ~100 m before leaving your device.",
+  "@onboardingDataUse": {
+    "description": "Onboarding data use statement"
+  },
+  "onboardingAgree": "I agree — start capturing",
+  "@onboardingAgree": {
+    "description": "Consent agree button"
+  },
+  "onboardingDecline": "Decline",
+  "@onboardingDecline": {
+    "description": "Consent decline button"
+  },
+  "historySync": "Sync",
+  "@historySync": {
+    "description": "History sync button label"
+  },
+  "historyEmpty": "No evidence queued yet.",
+  "@historyEmpty": {
+    "description": "History empty state"
+  },
+  "historyExportPdf": "Export PDF",
+  "@historyExportPdf": {
+    "description": "Export evidence as PDF"
+  },
+  "historyLaeqSubtitle": "LAeq {value} dB(A)",
+  "@historyLaeqSubtitle": {
+    "description": "History list LAeq subtitle",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "statusPending": "Pending",
+  "@statusPending": {
+    "description": "Queue status pending"
+  },
+  "statusSyncing": "Syncing",
+  "@statusSyncing": {
+    "description": "Queue status syncing"
+  },
+  "statusSynced": "Synced",
+  "@statusSynced": {
+    "description": "Queue status synced"
+  },
+  "statusFailed": "Failed",
+  "@statusFailed": {
+    "description": "Queue status failed"
+  },
+  "heatmapEmpty": "No synced evidence for heatmap yet.",
+  "@heatmapEmpty": {
+    "description": "Heatmap empty state"
+  },
+  "heatmapMapLegend": "Green: below limit · Amber: elevated · Red: high",
+  "@heatmapMapLegend": {
+    "description": "Heatmap map colour legend"
+  },
+  "heatmapCellCount": "n={count}",
+  "@heatmapCellCount": {
+    "description": "Cell sample count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "heatmapCellAvg": "avg {value} dB",
+  "@heatmapCellAvg": {
+    "description": "Cell average LAeq",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "heatmapCellMax": "max {value} dB",
+  "@heatmapCellMax": {
+    "description": "Cell max LAeq",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "heatmapCellViolations": "violations {count}",
+  "@heatmapCellViolations": {
+    "description": "Cell violation count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsLowDataMode": "Low-data mode (WiFi-only sync)",
+  "@settingsLowDataMode": {
+    "description": "Low-data toggle label"
+  },
+  "settingsLowDataHint": "Blocks sync on mobile data to save bandwidth.",
+  "@settingsLowDataHint": {
+    "description": "Low-data toggle hint"
+  },
+  "settingsLanguage": "Language",
+  "@settingsLanguage": {
+    "description": "Language selector label"
+  },
+  "settingsLanguageEn": "English",
+  "@settingsLanguageEn": {
+    "description": "English language option"
+  },
+  "settingsLanguageBn": "বাংলা",
+  "@settingsLanguageBn": {
+    "description": "Bengali language option"
+  },
+  "settingsMockDoeStatus": "Using local Mock DoE (offline sync)",
+  "@settingsMockDoeStatus": {
+    "description": "Read-only mock DoE indicator"
+  },
+  "settingsExportLastPdf": "Export last synced PDF",
+  "@settingsExportLastPdf": {
+    "description": "Export last synced evidence PDF"
+  },
+  "settingsNoSyncedEvidence": "No synced evidence to export.",
+  "@settingsNoSyncedEvidence": {
+    "description": "Snackbar when no synced evidence"
+  },
+  "settingsDebugLog": "Debug log (live)",
+  "@settingsDebugLog": {
+    "description": "Debug log section title"
+  },
+  "settingsCopyPath": "Copy path",
+  "@settingsCopyPath": {
+    "description": "Copy log path button"
+  },
+  "settingsClearLog": "Clear log",
+  "@settingsClearLog": {
+    "description": "Clear debug log button"
+  },
+  "settingsRefreshLog": "Refresh",
+  "@settingsRefreshLog": {
+    "description": "Refresh debug log button"
+  },
+  "settingsLogPathCopied": "Log file path copied",
+  "@settingsLogPathCopied": {
+    "description": "Snackbar after copying log path"
+  },
+  "settingsNoLogLines": "No log lines yet",
+  "@settingsNoLogLines": {
+    "description": "Empty debug log panel"
   }
 }
