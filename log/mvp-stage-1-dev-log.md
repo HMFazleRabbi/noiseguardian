@@ -42,10 +42,45 @@ Each entry: **Command** → **Expectation** → **Result** (errors/problems note
 
 ## Phase B/C — Heatmap removal
 
-*(To be filled during implementation)*
+### B1. Red — tests first
+
+| Action | Expectation | Result |
+|--------|-------------|--------|
+| Delete `heatmap_view_test.dart`, `heatmap_view_model_test.dart`, `heatmap_aggregation_test.dart` | 3 files gone | OK |
+| Update `app_router_test.dart` | `/heatmap` → route not found; `shellRoutes` guard | OK |
+| Update `scaffold_with_nav_bar_test.dart` | 3 nav destinations, no heatmap tap | OK |
+| Update `service_locator_test.dart` | Remove heatmap registration asserts | OK |
+
+### C1. Green — production (easy → hard)
+
+| Action | Expectation | Result |
+|--------|-------------|--------|
+| Delete `lib/ui/features/heatmap/**`, `heatmap_aggregation_service.dart`, `heatmap_cell.dart` | 5 files gone | OK |
+| Edit `scaffold_with_nav_bar.dart` | 3-tab nav | OK |
+| Edit `app_routes.dart` | `shellRoutes = [capture, history, settings]` | OK |
+| Edit `app_router.dart` | Remove heatmap branch | OK |
+| Edit `service_locator.dart` | Remove heatmap DI (last) | OK |
 
 ---
 
 ## Phase D — Final gate
 
-*(To be filled after heatmap removal)*
+| Command | Expectation | Result |
+|---------|-------------|--------|
+| `rg "HeatmapView\|HeatmapViewModel\|HeatmapAggregationService\|HeatmapCell" lib test` | Zero hits | OK (l10n `navHeatmap` retained for Stage 3) |
+| `flutter test --timeout 90s` | All green | OK — **110/110** |
+| `flutter build apk --debug --target-platform android-arm64` | Compiles | OK |
+| `git commit` | `stage-1: remove heatmap` | OK — `24c23e6` |
+
+### Problems encountered
+
+1. **Multi-ABI debug build fails on Windows** — `libsqlite3.so` missing for `armeabi-v7a` during native asset install. Workaround: `--target-platform android-arm64`.
+2. **Prior monolithic descope** reverted because bulk deletion left dangling DI references; this stage's slice-by-slice approach avoided that.
+
+---
+
+## Stage 1 complete
+
+- **Branch:** `mvp-descope`
+- **Tags:** `baseline-stage6` (pre-descope), commits `f0d87ce` + `24c23e6`
+- **Net surface:** 3-tab shell (capture / history / settings); sync, queue, crypto, l10n unchanged

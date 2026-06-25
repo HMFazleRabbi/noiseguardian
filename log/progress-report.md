@@ -9,11 +9,40 @@
 
 ## Executive Summary
 
-NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acoustic evidence of noise pollution in Dhaka. **Stages 1–6 are complete.** The app builds, runs on a physical Android device, passes all automated tests, and is under version control on GitHub.
+NoiseGuardian is a Flutter citizen-sensing app for capturing court-ready acoustic evidence of noise pollution in Dhaka. **Original Stages 1–6 are complete.** The project is now executing the **MVP descope** roadmap ([NG-Update-Design-Doc.md](../NG-Update-Design-Doc.md) §7). **MVP Stage 1 (heatmap removal) is complete** on branch `mvp-descope`.
 
 ---
 
-## Completed Work
+## MVP Descope Progress (NG-Update-Design-Doc.md)
+
+| MVP Stage | Scope | Status |
+|-----------|-------|--------|
+| 1 | Safety harness + remove Heatmap | **Complete** |
+| 2 | Remove Voice/TTS + Low-data; simplify Sensor Guard | Not started |
+| 3 | Remove l10n → English strings | Not started |
+| 4 | Remove Sync/Queue → ReportRepository | Not started |
+| 5 | Slim crypto + SHA-256 packet + local export | Not started |
+| 6 | YAMNet edge AI + release hardening | Not started |
+
+### MVP Stage 1 — Safety Harness & Heatmap Removal
+
+| Deliverable | Status |
+|-------------|--------|
+| Branch `mvp-descope`, tag `baseline-stage6` @ `df8799d` | Done |
+| Boot smoke test (capture → history → settings tabs) | Done |
+| `lib/ui/core/strings.dart` scaffold | Done |
+| Heatmap feature removed (UI, service, model, DI, route) | Done |
+| 3-tab shell: capture / history / settings | Done |
+
+**Quality gates (MVP Stage 1):** `flutter analyze` 0 errors · **110 / 110 tests** · debug APK (arm64) builds
+
+**Commits:** `f0d87ce` harness · `24c23e6` remove heatmap
+
+See [log/mvp-stage-1-dev-log.md](mvp-stage-1-dev-log.md).
+
+---
+
+## Completed Work (Original Roadmap)
 
 ### Stage 6 — UI/UX & Accessibility
 
@@ -86,7 +115,17 @@ test/widget/settings_view_test.dart            — 1 test
 
 ---
 
-## Next Up — Stage 7 (Hardening & Release)
+## Next Up — MVP Stage 2 (Voice/Low-data removal + Sensor Guard)
+
+**Deliverables:**
+
+- Remove `VoicePromptService` + `flutter_tts`
+- Remove low-data Wi-Fi gate toggle
+- Simplify `SensorGuardService` to accelerometer advisory only
+
+---
+
+## Next Up (Original) — Stage 7 (Hardening & Release) — superseded by MVP descope
 
 **Deliverables:**
 
